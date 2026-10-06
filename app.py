@@ -1,5 +1,5 @@
 """
-영어 학습 웹앱 (JSON 기반 버전)
+수학 학습 웹앱 (JSON 기반 버전)
 
 - DB(MySQL/PyMySQL)와 OpenAI 의존성 완전 제거
 - 문제 데이터: web/data/questions.json (파일이 없으면 인라인 샘플 폴백 1개 사용)
@@ -41,17 +41,17 @@ QUESTIONS_JSON_PATH = os.path.join(BASE_DIR, 'data', 'questions.json')
 # data/questions.json 이 아직 없을 때만 사용하는 인라인 폴백 샘플 (1개)
 _SAMPLE_DATA = {
     "categories": [
-        {"id": 1, "name": "Sample Category", "grade": "초등 5학년"}
+        {"id": 1, "name": "샘플 단원", "grade": "초등 5학년"}
     ],
     "questions": [
         {
             "id": 1,
             "category_id": 1,
             "type": "objective",
-            "question_text": "다음 중 'I go to school every day.'에서 동사를 고르세요.",
-            "choices": ["go", "school", "every", "day"],
-            "answer": 0,
-            "explanation": "'go'가 동사입니다. go는 '매일 학교에 간다'는 동작을 나타내는 동사입니다."
+            "question_text": "3 + 5의 값을 구하세요.",
+            "choices": ["6", "7", "8", "9"],
+            "answer": 2,
+            "explanation": "3에 5를 더하면 8입니다. (3, 4, 5, 6, 7, 8 — 손가락으로 세어 보세요.)"
         }
     ]
 }
