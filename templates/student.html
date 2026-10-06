@@ -1,0 +1,574 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>수학 학습 - 학생 대시보드</title>
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- KaTeX: 수식(분수·거듭제곱·루트) 렌더링용 -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        .card-shadow { box-shadow: 0 10px 25px rgba(0,0,0,0.1); }
+        .animate-fade-in { animation: fadeIn 0.5s ease-in; }
+        @keyframes fadeIn { from { opacity:0; transform:translateY(10px);} to {opacity:1; transform:translateY(0);} }
+        .katex { font-size: 1.05em; }
+    </style>
+</head>
+<body>
+    <!-- Flask에서 user_name과 categories 전달 -->
+    <div id="root"></div>
+
+    <script id="categories-data" type="application/json">
+        {{ categories | tojson }}
+    </script>
+
+    <script type="text/javascript">
+        // Flask 데이터를 전역 변수로 전달
+        window.USER_NAME = "{{ user_name }}";
+        try {
+            const dataScript = document.getElementById('categories-data');
+            window.CATEGORIES_DATA = JSON.parse(dataScript.textContent);
+        } catch(e) {
+            console.error('Categories 데이터 파싱 실패:', e);
+            window.CATEGORIES_DATA = [];
+        }
+    </script>
+
+    {% raw %}
+    <script type="text/babel">
+        const { useState, useEffect } = React;
+
+        const userName = window.USER_NAME || '사용자';
+        const categoriesData = window.CATEGORIES_DATA || [];
+
+        // ===== 수식 렌더링 헬퍼 =====
+        // $...$ 로 감싼 구간을 KaTeX로 변환한다. 예: "$\frac{1}{2}$와 $2^3$"
+        function renderMathText(text) {
+            if (text === null || text === undefined) return '';
+            const parts = String(text).split(/(\$[^$]+\$)/);
+            return parts.map(part => {
+                if (part.length > 2 && part.startsWith('$') && part.endsWith('$')) {
+                    if (typeof katex === 'undefined') return part;
+                    try {
+                        return katex.renderToString(part.slice(1, -1), { throwOnError: false });
+                    } catch (e) {
+                        console.warn('KaTeX 렌더 실패:', e);
+                        return part;
+                    }
+                }
+                return part
+                    .replace(/&/g, '&amp;')
+                    .replace(/</g, '&lt;')
+                    .replace(/>/g, '&gt;');
+            }).join('');
+        }
+
+        function MathText({ text, className }) {
+            const html = React.useMemo(() => renderMathText(text), [text]);
+            return <span className={className} dangerouslySetInnerHTML={{ __html: html }} />;
+        }
+
+        function App() {
+            const [view, setView] = useState('dashboard');
+            const [selectedCategory, setSelectedCategory] = useState(null);
+
+            const handleStartSession = (category) => {
+                setSelectedCategory(category);
+                setView('learning');
+            };
+
+            return (
+                <div className="min-h-screen bg-gray-50">
+                    {view === 'dashboard' && (
+                        <StudentDashboard
+                            userName={userName}
+                            categories={categoriesData}
+                            onStartSession={handleStartSession}
+                        />
+                    )}
+                    {view === 'learning' && (
+                        <LearningSession
+                            userName={userName}
+                            category={selectedCategory}
+                            onBack={() => setView('dashboard')}
+                        />
+                    )}
+                </div>
+            );
+        }
+
+        function StudentDashboard({ userName, onStartSession }) {
+            const [stats, setStats] = React.useState({
+                completedSessions: 0,
+                incompletedSessions: 0,
+                averageScore: 0
+            });
+
+            const [categories, setCategories] = React.useState([]);
+
+            const handleLogout = () => {
+                window.location.href = '/logout';
+            };
+
+            // 시작 / 다시 풀기 처리 (카테고리 및 통계 즉시 갱신)
+            const handleStart = async (cat) => {
+                try {
+                    const res = await fetch('/api/student/session/start', {
+                        method: 'POST',
+                        credentials: 'include',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ category_id: cat.id })
+                    });
+
+                    const data = await res.json();
+
+                    onStartSession({
+                        ...cat,
+                        category_result_id: data.category_result_id
+                    });
+                } catch (err) {
+                    console.error('Session start failed:', err);
+                    // 세션 시작 API 실패해도 문제 풀이는 계속 진행
+                    onStartSession(cat);
+                }
+            };
+
+            // 대시보드 데이터 로드
+            React.useEffect(() => {
+                fetch('/api/student/dashboard', {
+                    credentials: 'include'
+                })
+                    .then(res => res.json())
+                    .then(data => {
+                        setStats({
+                            completedSessions: data.stats.completed_sessions,
+                            incompletedSessions: data.stats.incompleted_sessions,
+                            averageScore: data.stats.average_score
+                        });
+                        setCategories(data.categories);
+                    })
+                    .catch(err => console.error('대시보드 로드 실패:', err));
+            }, []);
+
+            return (
+                <div className="min-h-screen bg-gray-50">
+                    <nav className="bg-white shadow-sm">
+                        <div className="max-w-7xl mx-auto px-4 h-16 flex justify-between items-center">
+                            <h1 className="text-2xl font-bold text-purple-600">
+                                AI 수학 튜터
+                            </h1>
+                            <div className="flex items-center gap-4">
+                                <span className="text-gray-700">👋 안녕하세요, {userName}</span>
+                                <button onClick={handleLogout}>나가기</button>
+                            </div>
+                        </div>
+                    </nav>
+
+                    <div className="max-w-7xl mx-auto px-4 py-8">
+                        <h2 className="text-3xl font-bold mb-6">학습 대시보드</h2>
+
+                        {/* 통계 카드 */}
+                        <div className="grid md:grid-cols-3 gap-6 mb-8">
+                            <StatCard
+                                title="남은 학습"
+                                value={stats.incompletedSessions}
+                            />
+                            <StatCard
+                                title="완료한 학습"
+                                value={stats.completedSessions}
+                            />
+                            <StatCard
+                                title="평균 점수"
+                                value={stats.averageScore}
+                            />
+                        </div>
+
+                        {/* 카테고리 */}
+                        <div className="bg-white rounded-xl p-6 card-shadow space-y-4">
+                            {categories.map(cat => (
+                                <div
+                                    key={cat.id}
+                                    className="flex justify-between items-center border p-4 rounded"
+                                >
+                                    <div>
+                                        <h3 className="font-bold">{cat.title}</h3>
+                                        {cat.done && (
+                                            <p className="text-sm text-green-600">
+                                                완료 · 점수 {cat.score}
+                                            </p>
+                                        )}
+                                    </div>
+
+                                    <button
+                                        onClick={() => handleStart(cat)}
+                                        className="bg-purple-600 text-white px-4 py-2 rounded"
+                                    >
+                                        {cat.done ? '다시 풀기' : '시작하기'}
+                                    </button>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                </div>
+            );
+        }
+
+        function StatCard({ title, value }) {
+            return (
+                <div className="bg-white rounded-xl p-6 card-shadow">
+                    <span className="text-gray-600">{title}</span>
+                    <p className="text-3xl font-bold text-purple-600">{value}</p>
+                </div>
+            );
+        }
+
+        // ===== 문제 풀이 세션 (GPT 채팅 없음: 문제 → 맞/틀 → 해설) =====
+        function LearningSession({ userName, category, onBack }) {
+            const [questions, setQuestions] = useState([]);
+            const [loading, setLoading] = useState(false);
+            const [currentQuestion, setCurrentQuestion] = useState(0);
+            const [answers, setAnswers] = useState({});
+            const [feedback, setFeedback] = useState(null);
+            const [submitting, setSubmitting] = useState(false);
+            const [showResults, setShowResults] = useState(false);
+            const [sessionScore, setSessionScore] = useState(0);
+
+            // 문제 가져오기
+            useEffect(() => {
+                const fetchQuestions = async () => {
+                    setLoading(true);
+                    try {
+                        const response = await fetch(`/api/categories/${category.id}/questions`);
+
+                        if (!response.ok) {
+                            throw new Error('Failed to fetch questions');
+                        }
+
+                        const data = await response.json();
+
+                        const formattedQuestions = data.map(q => {
+                            let correctAnswer = q.answer;
+                            let options = [];
+
+                            if (q.question_type === 'objective' && q.choices.length > 0) {
+                                options = q.choices.map(c => c.text);
+
+                                const answerNum = parseInt(q.answer);
+                                if (!isNaN(answerNum)) {
+                                    const correctChoice = q.choices.find(c => c.number === answerNum);
+                                    if (correctChoice) {
+                                        correctAnswer = correctChoice.text;
+                                    }
+                                }
+                            }
+
+                            return {
+                                id: q.id,
+                                type: q.question_type === 'objective' ? 'multiple-choice' : 'writing',
+                                question: q.question_text,
+                                options: options,
+                                correctAnswer: correctAnswer,
+                                explanation: q.explanation || q.hint || ''
+                            };
+                        });
+
+                        setQuestions(formattedQuestions);
+                    } catch (error) {
+                        console.error('문제 로드 실패:', error);
+                        setQuestions([]);
+                    } finally {
+                        setLoading(false);
+                    }
+                };
+
+                fetchQuestions();
+            }, [category]);
+
+            const handleAnswer = (answer) => {
+                setAnswers({ ...answers, [currentQuestion]: answer });
+            };
+
+            const handleSubmitAnswer = async () => {
+                setSubmitting(true);
+
+                const userAnswer = answers[currentQuestion];
+                const question = questions[currentQuestion];
+
+                try {
+                    let isCorrect = false;
+
+                    // 객관식은 프론트에서 1차 판단
+                    if (question.type === 'multiple-choice') {
+                        isCorrect = userAnswer === question.correctAnswer;
+                    }
+
+                    let serverFeedback = null;
+                    try {
+                        const response = await fetch('/api/submit-answer', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                            },
+                            body: JSON.stringify({
+                                question_id: question.id,
+                                student_answer: userAnswer,
+                                is_correct: isCorrect,
+                                category_id: category.id
+                            })
+                        });
+
+                        if (response.ok) {
+                            const serverResult = await response.json();
+                            serverFeedback = serverResult.feedback;
+                            // 서버 채점 결과를 우선한다 (정답 판정의 단일 기준)
+                            if (typeof serverResult.is_correct === 'boolean') {
+                                isCorrect = serverResult.is_correct;
+                            }
+                        }
+                    } catch (apiError) {
+                        console.warn('채점 API 실패 (프론트 판정으로 계속):', apiError);
+                    }
+
+                    setFeedback({
+                        isCorrect: isCorrect,
+                        feedback: serverFeedback || (
+                            isCorrect
+                                ? '🎉 정답입니다! 잘했어요.'
+                                : '❌ 아쉽네요. 다시 확인해 보세요.'
+                        ),
+                        correction:
+                            !isCorrect && question.type === 'multiple-choice'
+                                ? question.correctAnswer
+                                : '',
+                        explanation: question.explanation
+                    });
+                } catch (error) {
+                    console.error('채점 실패:', error);
+                    setFeedback({
+                        isCorrect: false,
+                        feedback: '채점 중 오류가 발생했습니다.',
+                        correction: question.correctAnswer,
+                        explanation: question.explanation
+                    });
+                } finally {
+                    setSubmitting(false);
+                }
+            };
+
+            const handleNextQuestion = () => {
+                setFeedback(null);
+
+                if (currentQuestion < questions.length - 1) {
+                    setCurrentQuestion(currentQuestion + 1);
+                } else {
+                    const totalScore = Math.round(
+                        (questions.filter((q, idx) => answers[idx] === q.correctAnswer).length / questions.length) * 100
+                    );
+                    setSessionScore(totalScore);
+                    setShowResults(true);
+                }
+            };
+
+    // ===== 로딩 화면 =====
+    if (loading) {
+        return (
+            <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+                <div className="text-center">
+                    <div className="text-4xl mb-4">⏳</div>
+                    <p className="text-gray-600">문제를 불러오는 중...</p>
+                </div>
+            </div>
+        );
+    }
+
+    if (questions.length === 0) {
+        return (
+            <div className="min-h-screen bg-gray-50">
+                <nav className="bg-white shadow-sm">
+                    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                        <div className="flex justify-between items-center h-16">
+                            <h1 className="text-2xl font-bold text-purple-600">AI 수학 튜터</h1>
+                        </div>
+                    </div>
+                </nav>
+                <div className="max-w-3xl mx-auto px-4 py-12">
+                    <div className="bg-white rounded-xl card-shadow p-8 text-center">
+                        <div className="text-6xl mb-4">📝</div>
+                        <h2 className="text-2xl font-bold text-gray-800 mb-4">
+                            아직 문제가 없습니다
+                        </h2>
+                        <p className="text-gray-600 mb-6">
+                            선생님이 문제를 등록할 때까지 기다려 주세요.
+                        </p>
+                        <button
+                            onClick={onBack}
+                            className="bg-purple-600 text-white py-3 px-6 rounded-lg hover:bg-purple-700"
+                        >
+                            돌아가기
+                        </button>
+                    </div>
+                </div>
+            </div>
+        );
+    }
+
+    if (showResults) {
+        return (
+            <div className="min-h-screen bg-gray-50">
+                <nav className="bg-white shadow-sm">
+                    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                        <div className="flex justify-between items-center h-16">
+                            <h1 className="text-2xl font-bold text-purple-600">AI 수학 튜터</h1>
+                        </div>
+                    </div>
+                </nav>
+                <div className="max-w-3xl mx-auto px-4 py-12">
+                    <div className="bg-white rounded-xl card-shadow p-8 text-center animate-fade-in">
+                        <div className="text-6xl mb-4">🎉</div>
+                        <h2 className="text-3xl font-bold text-gray-800 mb-2">학습 완료!</h2>
+                        <p className="text-gray-600 mb-4">
+                            {category.title} 학습을 마쳤습니다!
+                        </p>
+                        <p className="text-5xl font-bold text-purple-600 mb-8">
+                            점수: {sessionScore}%
+                        </p>
+                        <button
+                            onClick={onBack}
+                            className="w-full bg-purple-600 text-white py-3 px-4 rounded-lg font-medium hover:bg-purple-700 transition"
+                        >
+                            학습 대시보드로 돌아가기
+                        </button>
+                    </div>
+                </div>
+            </div>
+        );
+    }
+
+    const question = questions[currentQuestion];
+
+    return (
+        <div className="min-h-screen bg-gray-50">
+            <nav className="bg-white shadow-sm">
+                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                    <div className="flex justify-between items-center h-16">
+                        <h1 className="text-2xl font-bold text-purple-600">AI 수학 튜터</h1>
+                        <div className="flex items-center gap-4">
+                            <span className="text-gray-700">👋 안녕하세요, {userName}</span>
+                            <button
+                                onClick={onBack}
+                                className="px-4 py-2 text-sm text-gray-700 hover:text-gray-900"
+                            >
+                                ← 돌아가기
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </nav>
+
+            <div className="max-w-3xl mx-auto px-4 py-8">
+                <div className="mb-4 flex justify-between items-center">
+                    <p className="text-gray-600 font-medium">
+                        문제 {currentQuestion + 1}/{questions.length}
+                    </p>
+                    <span className="text-sm text-purple-600 font-medium">
+                        {category.title}
+                    </span>
+                </div>
+
+                <div className="bg-white rounded-xl card-shadow p-8 mb-6 animate-fade-in">
+                    <p className="text-xl text-gray-800 mb-6">
+                        <MathText text={question.question} />
+                    </p>
+
+                    {question.type === 'multiple-choice' ? (
+                        <div className="space-y-2">
+                            {question.options.map((opt, i) => (
+                                <button
+                                    key={i}
+                                    onClick={() => handleAnswer(opt)}
+                                    disabled={feedback !== null}
+                                    className={`w-full p-4 border rounded-lg text-left transition ${
+                                        answers[currentQuestion] === opt
+                                            ? 'border-purple-500 bg-purple-50'
+                                            : 'border-gray-200 hover:border-purple-300'
+                                    } ${
+                                        feedback !== null
+                                            ? 'cursor-not-allowed opacity-60'
+                                            : ''
+                                    }`}
+                                >
+                                    <MathText text={opt} />
+                                </button>
+                            ))}
+                        </div>
+                    ) : (
+                        <textarea
+                            value={answers[currentQuestion] || ''}
+                            onChange={(e) => handleAnswer(e.target.value)}
+                            disabled={feedback !== null}
+                            className="w-full p-4 border-2 border-gray-200 rounded-lg focus:border-purple-500 focus:outline-none"
+                            rows="6"
+                            placeholder="여기에 답을 적어주세요..."
+                        />
+                    )}
+
+                    {!feedback && answers[currentQuestion] && (
+                        <button
+                            onClick={handleSubmitAnswer}
+                            disabled={submitting}
+                            className="mt-6 w-full bg-purple-600 text-white py-3 px-4 rounded-lg font-medium hover:bg-purple-700 transition disabled:opacity-50"
+                        >
+                            {submitting ? '채점 중...' : '답 제출하기'}
+                        </button>
+                    )}
+                </div>
+
+                {feedback && (
+                    <div className="bg-white rounded-xl card-shadow p-6 animate-fade-in">
+                        <div className={`mb-4 p-4 rounded-lg ${
+                            feedback.isCorrect ? 'bg-green-50' : 'bg-red-50'
+                        }`}>
+                            <p className={`font-semibold ${
+                                feedback.isCorrect ? 'text-green-700' : 'text-red-700'
+                            }`}>
+                                {feedback.feedback}
+                            </p>
+                            {feedback.correction && (
+                                <p className="text-gray-700 mt-2">
+                                    정답: <strong><MathText text={feedback.correction} /></strong>
+                                </p>
+                            )}
+                        </div>
+                        {feedback.explanation && (
+                            <div className="mb-4 p-4 bg-blue-50 rounded-lg">
+                                <p className="text-sm font-semibold text-blue-700 mb-1">💡 해설</p>
+                                <p className="text-gray-700">
+                                    <MathText text={feedback.explanation} />
+                                </p>
+                            </div>
+                        )}
+
+                        <button
+                            onClick={handleNextQuestion}
+                            className="w-full bg-purple-600 text-white py-3 rounded-lg font-medium hover:bg-purple-700 transition"
+                        >
+                            {currentQuestion < questions.length - 1 ? '다음 문제' : '결과 보기'}
+                        </button>
+                    </div>
+                )}
+            </div>
+        </div>
+    );
+}
+{% endraw %}
+        const rootDiv = document.getElementById('root');
+        ReactDOM.render(<App />, rootDiv);
+    </script>
+
+</body>
+</html>

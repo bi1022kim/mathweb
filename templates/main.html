@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI 수학 튜터</title>
+    <style>
+        body, html {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            background-color: #0B0F2A; 
+            display: flex;
+            justify-content: center;
+            font-family: 'Arial', sans-serif;
+            overflow-y: auto;
+            overflow-x: hidden;
+        }
+        /* 전체 컨테이너 */
+        .container {
+            width: calc(100vh * 0.65);
+            max-width: 100vw;
+            position: relative;
+        }
+        /* 메인 이미지 영역 */
+        .main-wrapper {
+            position: relative;
+            height: 100vh;
+            width: 100%;
+            background-image: url('/static/Ai_bg.png');
+            background-size: 100% 100%;
+            background-repeat: no-repeat;
+            background-position: center;
+        }
+        /* 버튼 컨테이너 - 이미지 위에 오버레이 */
+        .button-overlay {
+            position: absolute;
+            bottom: 60px;
+            left: 0;
+            right: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            z-index: 10;
+        }
+        /* 중앙 학습 시작 버튼 */
+        .start-btn {
+            width: 85%;
+            background: linear-gradient(135deg, #4ade80 0%, #3b82f6 100%);
+            border: none;
+            padding: 24px 0;
+            font-size: 1.4rem;
+            font-weight: bold;
+            color: white;
+            border-radius: 22px;
+            cursor: pointer;
+            margin-bottom: 30px;
+            box-shadow: 0 15px 40px rgba(74, 222, 128, 0.4);
+            transition: all 0.3s ease;
+        }
+        .start-btn:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 50px rgba(74, 222, 128, 0.5);
+        }
+        .who-text {
+            color: rgba(255, 255, 255, 0.9);
+            margin-bottom: 20px;
+            font-size: 1.1rem;
+            letter-spacing: 1px;
+        }
+        /* 하단 선택 섹션 */
+        .selection-container {
+            display: flex;
+            gap: 15px;
+            width: 85%;
+        }
+        .role-btn {
+            flex: 1;
+            background: rgba(30, 41, 89, 0.7);
+            backdrop-filter: blur(10px);
+            border: 2px solid rgba(100, 150, 255, 0.3);
+            padding: 30px 15px;
+            border-radius: 20px;
+            text-align: center;
+            cursor: pointer;
+            color: white;
+            transition: all 0.4s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        .role-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, rgba(74, 222, 128, 0.1) 0%, rgba(59, 130, 246, 0.1) 100%);
+            opacity: 0;
+            transition: opacity 0.4s ease;
+        }
+        .role-btn:hover {
+            border-color: rgba(100, 200, 255, 0.6);
+            box-shadow: 0 20px 60px rgba(59, 130, 246, 0.4);
+            transform: translateY(-10px);
+        }
+        .role-btn:hover::before {
+            opacity: 1;
+        }
+        .role-btn h3 { 
+            margin: 10px 0 8px 0; 
+            font-size: 1.3rem;
+            position: relative;
+            z-index: 1;
+            font-weight: bold;
+        }
+        .role-btn p { 
+            font-size: 0.85rem; 
+            opacity: 0.7; 
+            margin: 0;
+            position: relative;
+            z-index: 1;
+        }
+        .icon { 
+            font-size: 42px;
+            position: relative;
+            z-index: 1;
+            filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.3));
+        }
+        button:active, .role-btn:active {
+            transform: scale(0.97);
+        }
+
+        .who-title {
+            font-size: 27px;
+            color: #b8c5ff;
+            margin-bottom: 25px;
+            font-weight: 400;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- 이미지 영역 -->
+        <div class="main-wrapper">
+            <!-- 버튼들을 이미지 위에 오버레이 -->
+            <div class="button-overlay">
+                <button class="start-btn" onclick="handleGuestLogin()">
+                    🚀 Start Learning with AI
+                </button>
+                <h2 class="who-title">Who are you?</h2>
+                <div class="selection-container">
+                <div class="role-btn" onclick="location.href='/student_login'">
+                    <div class="icon">🎓</div>
+                    <h3>Student</h3>
+                    <p>Learn with AI</p>
+                </div>
+
+                <div class="role-btn" onclick="location.href='/admin_login'">
+                    <div class="icon">⚙️</div>
+                    <h3>Teacher</h3>
+                    <p>Manage Students & Content</p>
+                </div>
+            </div>
+            </div>
+        </div>
+    </div>
+</body>
+
+<script>
+    async function handleGuestLogin() {
+        try {
+            const response = await fetch('/guest-login', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            });
+
+            const data = await response.json();
+
+            if (data.success) {
+                // 서버가 준 '/student' 경로로 이동
+                window.location.href = data.redirect;
+            } else {
+                alert('로그인 실패: ' + data.error);
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            alert('서버 연결에 실패했습니다.');
+        }
+    }
+
+    // // 기존 onclick="location.href='/guest-login'" 대신 아래 함수 호출
+    // function postToGuest() {
+    //     const form = document.createElement('form');
+    //     form.method = 'POST';
+    //     form.action = '/guest-login';
+    //     document.body.appendChild(form);
+    //     form.submit();
+    // }
+</script>
+</html>

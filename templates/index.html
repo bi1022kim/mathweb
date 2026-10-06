@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI 수학 튜터 - 로그인</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        .gradient-bg {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        .card-shadow {
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+        }
+        .animate-fade-in {
+            animation: fadeIn 0.5s ease-in;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body>
+    <div class="min-h-screen gradient-bg flex items-center justify-center p-4">
+        <div class="bg-white rounded-2xl card-shadow p-8 w-full max-w-md animate-fade-in">
+            <div class="text-center mb-8">
+                <h1 class="text-4xl font-bold text-gray-800 mb-2">🎓 AI 수학 튜터</h1>
+                <p class="text-gray-600">Boost your English skills the smart way.</p>
+            </div>
+
+            <!-- 로그인 없이 시작하기 버튼 -->
+            <button
+                onclick="handleGuestLogin()"
+                class="w-full mb-6 py-4 px-4 rounded-lg font-medium transition bg-gradient-to-r from-green-500 to-emerald-600 text-white hover:from-green-600 hover:to-emerald-700 shadow-lg"
+            >
+                <div class="flex items-center justify-center gap-2">
+                    <span class="text-xl">🚀</span>
+                    <span>Start Instantly - No Required</span>
+                </div>
+            </button>
+
+            <div class="relative mb-6">
+                <div class="absolute inset-0 flex items-center">
+                    <div class="w-full border-t border-gray-300"></div>
+                </div>
+                <div class="relative flex justify-center text-sm">
+                    <span class="px-2 bg-white text-gray-500">or</span>
+                </div>
+            </div>
+
+            <form id="loginForm" class="space-y-6">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">
+                        Select Your Role
+                    </label>
+                    <div class="flex gap-4">
+                        <button
+                            type="button"
+                            onclick="selectRole('student')"
+                            id="studentBtn"
+                            class="flex-1 py-3 px-4 rounded-lg font-medium transition bg-purple-600 text-white"
+                        >
+                            👨‍🎓 Student
+                        </button>
+                        <button
+                            type="button"
+                            onclick="selectRole('admin')"
+                            id="adminBtn"
+                            class="flex-1 py-3 px-4 rounded-lg font-medium transition bg-gray-100 text-gray-700 hover:bg-gray-200"
+                        >
+                            👨‍🏫 Adiministrator
+                        </button>
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">
+                        Username
+                    </label>
+                    <input
+                        type="text"
+                        id="userId"
+                        class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                        placeholder="Enter your username"
+                        required
+                    />
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">
+                        Password
+                    </label>
+                    <input
+                        type="password"
+                        id="password"
+                        class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                        placeholder="Enter your password"
+                        required
+                    />
+                    <p id="adminHint" class="text-xs text-gray-500 mt-1 hidden">* 데모용 비밀번호: admin123</p>
+                </div>
+
+                <div id="studentIdField" class="block">
+                    <label class="block text-sm font-medium text-gray-700 mb-2">
+                        Student ID (Optional)
+                    </label>
+                    <input
+                        type="text"
+                        id="studentId"
+                        class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                        placeholder="Enter your student ID"
+                    />
+                </div>
+
+                <button
+                    type="submit"
+                    class="w-full bg-purple-600 text-white py-3 px-4 rounded-lg font-medium hover:bg-purple-700 transition"
+                >
+                    Sign In
+                </button>
+
+                <!-- 회원가입 링크 추가 -->
+                <div class="text-center">
+                    <p class="text-sm text-gray-600">
+                        Don't have an account?
+                        <a href="/signup" class="text-purple-600 hover:text-purple-700 font-medium">Sign Up</a>
+                    </p>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        let currentRole = 'student';
+
+        function selectRole(role) {
+            currentRole = role;
+            const studentBtn = document.getElementById('studentBtn');
+            const adminBtn = document.getElementById('adminBtn');
+            const studentIdField = document.getElementById('studentIdField');
+            const adminHint = document.getElementById('adminHint');
+            const passwordInput = document.getElementById('password');
+
+            if (role === 'student') {
+                studentBtn.className = 'flex-1 py-3 px-4 rounded-lg font-medium transition bg-purple-600 text-white';
+                adminBtn.className = 'flex-1 py-3 px-4 rounded-lg font-medium transition bg-gray-100 text-gray-700 hover:bg-gray-200';
+                studentIdField.classList.remove('hidden');
+                adminHint.classList.add('hidden');
+                passwordInput.placeholder = 'Enter your password';
+            } else {
+                studentBtn.className = 'flex-1 py-3 px-4 rounded-lg font-medium transition bg-gray-100 text-gray-700 hover:bg-gray-200';
+                adminBtn.className = 'flex-1 py-3 px-4 rounded-lg font-medium transition bg-purple-600 text-white';
+                studentIdField.classList.add('hidden');
+                adminHint.classList.remove('hidden');
+                passwordInput.placeholder = 'Enter Administrator password';
+            }
+        }
+
+        async function handleGuestLogin() {
+            try {
+                const response = await fetch('/guest-login', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    }
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    // 여기를 수정! result.redirect를 사용
+                    window.location.href = result.redirect;  // '/student'로 이동
+                } else {
+                    alert('게스트 로그인에 실패했습니다.');
+                }
+            } catch (error) {
+                console.error('게스트 로그인 오류:', error);
+                alert('로그인 중 오류가 발생했습니다.');
+            }
+        }
+
+        document.getElementById('loginForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const userId = document.getElementById('userId').value.trim();
+            const password = document.getElementById('password').value.trim();
+            const studentId = document.getElementById('studentId').value.trim();
+
+            if (!userId) {
+                alert('아이디를 입력해주세요');
+                return;
+            }
+            if (!password) {
+                alert('비밀번호를 입력해주세요');
+                return;
+            }
+
+            try {
+                // 서버에 로그인 요청
+                const response = await fetch('/', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        role: currentRole,
+                        userId: userId,
+                        password: password,
+                        studentId: currentRole === 'student' ? studentId : null
+                    })
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    // DB에서 가져온 이름으로 환영 메시지 표시
+                    alert(result.message);
+
+                    // 서버에서 전달한 redirect URL로 이동
+                    if (result.redirect) {
+                        window.location.href = result.redirect;
+                    } else {
+                        // 기본 이동 (안전용)
+                        window.location.href = currentRole === 'admin' ? '/admin' : '/student';
+                    }
+                } else {
+                    alert(result.message);
+                }
+            } catch (error) {
+                console.error('로그인 오류:', error);
+                alert('로그인 중 오류가 발생했습니다.');
+            }
+        });
+    </script>
+</body>
+</html>

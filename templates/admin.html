@@ -1,0 +1,1141 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI 수학 튜터 관리자 - 스마트 수학 학습</title>
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        .gradient-bg {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        .card-shadow {
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+        }
+        .animate-fade-in {
+            animation: fadeIn 0.5s ease-in;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body>
+    <div id="root"
+        data-username="{{ user_name }}"
+        data-students='{{ students | tojson }}'
+        data-student-count="{{ student_count }}"
+        data-average-score="{{ average_score | tojson }}">
+    </div>
+
+
+
+    <script type="text/babel">
+        {% raw %}
+        const { useState, useEffect } = React;
+        
+        const App = () => {
+            const rootDiv = document.getElementById('root');
+            const userName = rootDiv.dataset.username || '관리자';
+            const initialStudents = JSON.parse(rootDiv.dataset.students || '[]');
+            const studentCount = parseInt(rootDiv.dataset.studentCount || '0');
+
+            const [students, setStudents] = React.useState(initialStudents);
+            const [questions, setQuestions] = React.useState([]);
+
+            const handleLogout = () => {
+                fetch('/logout', { method: 'POST' }).then(() => {
+                    window.location.href = '/';
+                });
+            };
+
+            const handleAddQuestions = (newQuestions) => {
+                if (!Array.isArray(newQuestions)) return;
+                setQuestions(prev => [...prev, ...newQuestions]);
+            };
+
+
+            return (
+                <AdminDashboard 
+                    user={{ name: userName }}
+                    students={students}
+                    studentCount={studentCount}
+                    questions={questions}
+                    onLogout={handleLogout}
+                    onAddQuestions={handleAddQuestions}
+                />
+            );
+        };
+
+        // 관리자 대시보드
+        // function AdminDashboard({ onLogout, onAddQuestions }) {
+        //     const { useState, useEffect } = React;
+
+        //     // Flask에서 전달된 데이터
+        //     const root = document.getElementById('root');
+        //     const user = { name: root.dataset.username };
+        //     const studentsFromServer = JSON.parse(root.dataset.students);
+        //     const averageScore = Number(root.dataset.averageScore || 0);
+
+        //     const [activeTab, setActiveTab] = useState('students');
+
+        //     // 학생 상태 관리
+        //     const [students, setStudents] = useState(
+        //         studentsFromServer.map(s => ({
+        //             id: s.id,
+        //             name: s.name,
+        //             grade: s.grade,
+        //             sessions: s.sessions || 0,
+        //             avgScore: Number(s.avg_score || 0),
+        //             lastActive: s.last_active || '–'
+        //         }))
+        //     );
+
+        //     // 콘텐츠 상태 관리
+        //     const [contents, setContents] = useState([]);
+        //     const [newContent, setNewContent] = useState({
+        //         title: '',
+        //         level: '',
+        //         questions: 0
+        //     });
+
+        //     // 카테고리 로드
+        //     useEffect(() => {
+        //         fetch("/api/admin/categories")
+        //             .then(res => res.json())
+        //             .then(data => {
+        //                 const formatted = data.categories.map(item => ({
+        //                     id: item.id,
+        //                     title: item.title,
+        //                     level: item.grade || '',
+        //                     questions: item.question_count || 0,
+        //                     status: '활성'
+        //                 }));
+        //                 setContents(formatted);
+        //             })
+        //             .catch(err => console.error("카테고리 로드 실패:", err));
+        //     }, []);
+
+        //     // 새 콘텐츠 추가
+        //     const handleAddContent = async () => {
+        //         if (!newContent.title.trim()) return alert("제목 입력");
+        //         if (!newContent.level) return alert("학년 선택");
+
+        //         const payload = {
+        //             title: newContent.title,
+        //             grade: newContent.level,
+        //             description: ''
+        //         };
+
+        //         const res = await fetch("/api/admin/add-category", {
+        //             method: "POST",
+        //             headers: { "Content-Type": "application/json" },
+        //             body: JSON.stringify(payload)
+        //         });
+
+        //         const data = await res.json();
+
+        //         if (data.success) {
+        //             setContents(prev => [
+        //                 ...prev,
+        //                 {
+        //                     id: data.id,
+        //                     title: newContent.title,
+        //                     level: newContent.level,
+        //                     questions: 0,
+        //                     status: '활성'
+        //                 }
+        //             ]);
+        //             setNewContent({ title: '', level: '', questions: 0 });
+        //         }
+        //     };
+
+        //     // 학생 삭제
+        //     const handleDeleteStudent = async (studentId) => {
+        //         if (!confirm("정말 이 학생과 모든 기록을 삭제하시겠습니까?")) return;
+
+        //         try {
+        //             const res = await fetch(`/api/admin/delete-student/${studentId}`, {
+        //                 method: "DELETE"
+        //             });
+        //             const data = await res.json();
+
+        //             if (data.success) {
+        //                 setStudents(prev => prev.filter(s => s.id !== studentId));
+        //                 alert("학생과 모든 기록이 삭제되었습니다.");
+        //             } else {
+        //                 alert("삭제 실패: " + data.message);
+        //             }
+        //         } catch (err) {
+        //             console.error(err);
+        //             alert("삭제 중 오류가 발생했습니다.");
+        //         }
+        //     };
+
+        //     // 전체 문제 수
+        //     const totalQuestions = contents.reduce((sum, c) => sum + (c.questions || 0), 0);
+
+        //     return (
+        //         <div className="min-h-screen bg-gray-50">
+        //             <nav className="bg-white shadow-sm">
+        //                 <div className="max-w-7xl mx-auto px-4 h-16 flex justify-between items-center">
+        //                     <h1 className="text-2xl font-bold text-purple-600">
+        //                         AI 수학 튜터 - 관리자
+        //                     </h1>
+        //                     <div className="flex items-center gap-4">
+        //                         <span>👨‍💼 {user.name}님</span>
+        //                         <button onClick={onLogout} className="text-red-500">로그아웃</button>
+        //                     </div>
+        //                 </div>
+        //             </nav>
+
+        //             <div className="max-w-7xl mx-auto px-4 py-8">
+        //                 <h2 className="text-3xl font-bold mb-6">관리자 대시보드</h2>
+
+        //                 {/* 통계 카드 */}
+        //                 <div className="grid md:grid-cols-4 gap-6 mb-8">
+        //                     <StatCard title="전체 학생" value={students.length} icon="👥" />
+        //                     <StatCard title="활성 콘텐츠" value={contents.filter(c => c.status === '활성').length} icon="📚" />
+        //                     <StatCard title="전체 문제" value={totalQuestions} icon="❓" />
+        //                     <StatCard title="평균 점수" value={averageScore.toFixed(1)} icon="⭐" />
+        //                 </div>
+
+        //                 {/* 탭 */}
+        //                 <div className="bg-white rounded-xl card-shadow">
+        //                     <div className="border-b flex">
+        //                         {['students', 'contents', 'questions'].map(tab => (
+        //                             <button
+        //                                 key={tab}
+        //                                 onClick={() => setActiveTab(tab)}
+        //                                 className={`px-6 py-4 ${
+        //                                     activeTab === tab
+        //                                         ? 'text-purple-600 border-b-2 border-purple-600'
+        //                                         : 'text-gray-600'
+        //                                 }`}
+        //                             >
+        //                                 {tab === 'students' && '학생 관리'}
+        //                                 {tab === 'contents' && '콘텐츠 관리'}
+        //                                 {tab === 'questions' && '문제 생성'}
+        //                             </button>
+        //                         ))}
+        //                     </div>
+
+        //                     <div className="p-6">
+        //                         {activeTab === 'students' && (
+        //                             <StudentManagement 
+        //                                 students={students} 
+        //                                 onDeleteStudent={handleDeleteStudent} 
+        //                             />
+        //                         )}
+
+        //                         {activeTab === 'contents' && (
+        //                             <ContentManagement
+        //                                 contents={contents}
+        //                                 setContents={setContents}
+        //                                 newContent={newContent}
+        //                                 setNewContent={setNewContent}
+        //                                 handleAddContent={handleAddContent}
+        //                             />
+        //                         )}
+
+        //                         {activeTab === 'questions' && (
+        //                             <QuestionGeneration
+        //                                 contents={contents}
+        //                                 onAddQuestions={onAddQuestions}
+        //                             />
+        //                         )}
+        //                     </div>
+        //                 </div>
+        //             </div>
+        //         </div>
+        //     );
+        // }
+
+        // // 통계 카드 컴포넌트
+        // function StatCard({ title, value, icon }) {
+        //     return (
+        //         <div className="bg-white rounded-xl p-6 card-shadow">
+        //             <div className="flex justify-between mb-2">
+        //                 <span className="text-gray-600">{title}</span>
+        //                 <span className="text-2xl">{icon}</span>
+        //             </div>
+        //             <p className="text-3xl font-bold text-purple-600">{value}</p>
+        //         </div>
+        //     );
+        // }
+        function AdminDashboard({ onLogout, onAddQuestions }) {
+            const { useState, useEffect, useMemo } = React;
+
+            const root = document.getElementById('root');
+            const user = { name: root.dataset.username };
+            const studentsFromServer = JSON.parse(root.dataset.students);
+
+            const [activeTab, setActiveTab] = useState('students');
+
+            // 학생 상태 관리
+            const [students, setStudents] = useState(
+                studentsFromServer.map(s => ({
+                    id: s.id,
+                    name: s.name,
+                    grade: s.grade,
+                    sessions: s.sessions || 0,
+                    avgScore: Number(s.avg_score || 0),
+                    lastActive: s.last_active || '–'
+                }))
+            );
+
+            // 평균 점수 자동 계산
+            const averageScore = useMemo(() => {
+                if (students.length === 0) return 0;
+                const total = students.reduce((sum, s) => sum + s.avgScore, 0);
+                return total / students.length;
+            }, [students]);
+
+            // 콘텐츠 상태 관리
+            const [contents, setContents] = useState([]);
+            const [newContent, setNewContent] = useState({
+                title: '',
+                level: '',
+                questions: 0
+            });
+
+            // 카테고리 로드
+            useEffect(() => {
+                fetch("/api/admin/categories")
+                    .then(res => res.json())
+                    .then(data => {
+                        const formatted = data.categories.map(item => ({
+                            id: item.id,
+                            title: item.title,
+                            level: item.grade || '',
+                            questions: item.question_count || 0,
+                            status: '활성'
+                        }));
+                        setContents(formatted);
+                    })
+                    .catch(err => console.error("카테고리 로드 실패:", err));
+            }, []);
+
+            // 새 콘텐츠 추가
+            const handleAddContent = async () => {
+                if (!newContent.title.trim()) return alert("제목 입력");
+                if (!newContent.level) return alert("학년 선택");
+
+                const payload = {
+                    title: newContent.title,
+                    grade: newContent.level,
+                    description: ''
+                };
+
+                const res = await fetch("/api/admin/add-category", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(payload)
+                });
+
+                const data = await res.json();
+
+                if (data.success) {
+                    setContents(prev => [
+                        ...prev,
+                        {
+                            id: data.id,
+                            title: newContent.title,
+                            level: newContent.level,
+                            questions: 0,
+                            status: '활성'
+                        }
+                    ]);
+                    setNewContent({ title: '', level: '', questions: 0 });
+                }
+            };
+
+            // 학생 삭제
+            const handleDeleteStudent = async (studentId) => {
+                if (!confirm("정말 이 학생과 모든 기록을 삭제하시겠습니까?")) return;
+
+                try {
+                    const res = await fetch(`/api/admin/delete-student/${studentId}`, {
+                        method: "DELETE"
+                    });
+                    const data = await res.json();
+
+                    if (data.success) {
+                        // 상태에서 제거 → 평균 점수 자동 업데이트
+                        setStudents(prev => prev.filter(s => s.id !== studentId));
+                        alert("학생과 모든 기록이 삭제되었습니다.");
+                    } else {
+                        alert("삭제 실패: " + data.message);
+                    }
+                } catch (err) {
+                    console.error(err);
+                    alert("삭제 중 오류가 발생했습니다.");
+                }
+            };
+
+            // 전체 문제 수
+            const totalQuestions = contents.reduce((sum, c) => sum + (c.questions || 0), 0);
+
+            return (
+                <div className="min-h-screen bg-gray-50">
+                    <nav className="bg-white shadow-sm">
+                        <div className="max-w-7xl mx-auto px-4 h-16 flex justify-between items-center">
+                            <h1 className="text-2xl font-bold text-purple-600">
+                                AI 수학 튜터 - 관리자
+                            </h1>
+                            <div className="flex items-center gap-4">
+                                <span>👨‍💼 {user.name}님</span>
+                                <button onClick={onLogout} className="text-red-500">로그아웃</button>
+                            </div>
+                        </div>
+                    </nav>
+
+                    <div className="max-w-7xl mx-auto px-4 py-8">
+                        <h2 className="text-3xl font-bold mb-6">관리자 대시보드</h2>
+
+                        {/* 통계 카드 */}
+                        <div className="grid md:grid-cols-4 gap-6 mb-8">
+                            <StatCard title="전체 학생" value={students.length} icon="👥" />
+                            <StatCard title="활성 콘텐츠" value={contents.filter(c => c.status === '활성').length} icon="📚" />
+                            <StatCard title="전체 문제" value={totalQuestions} icon="❓" />
+                            <StatCard title="평균 점수" value={averageScore.toFixed(1)} icon="⭐" />
+                        </div>
+
+                        {/* 탭 */}
+                        <div className="bg-white rounded-xl card-shadow">
+                            <div className="border-b flex">
+                                {['students', 'contents', 'questions'].map(tab => (
+                                    <button
+                                        key={tab}
+                                        onClick={() => setActiveTab(tab)}
+                                        className={`px-6 py-4 ${
+                                            activeTab === tab
+                                                ? 'text-purple-600 border-b-2 border-purple-600'
+                                                : 'text-gray-600'
+                                        }`}
+                                    >
+                                        {tab === 'students' && '학생 관리'}
+                                        {tab === 'contents' && '콘텐츠 관리'}
+                                        {tab === 'questions' && '문제 생성'}
+                                    </button>
+                                ))}
+                            </div>
+
+                            <div className="p-6">
+                                {activeTab === 'students' && (
+                                    <StudentManagement 
+                                        students={students} 
+                                        onDeleteStudent={handleDeleteStudent} 
+                                    />
+                                )}
+
+                                {activeTab === 'contents' && (
+                                    <ContentManagement
+                                        contents={contents}
+                                        setContents={setContents}
+                                        newContent={newContent}
+                                        setNewContent={setNewContent}
+                                        handleAddContent={handleAddContent}
+                                    />
+                                )}
+
+                                {activeTab === 'questions' && (
+                                    <QuestionGeneration
+                                        contents={contents}
+                                        onAddQuestions={onAddQuestions}
+                                    />
+                                )}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            );
+        }
+
+        // 통계 카드 컴포넌트
+        function StatCard({ title, value, icon }) {
+            return (
+                <div className="bg-white rounded-xl p-6 card-shadow">
+                    <div className="flex justify-between mb-2">
+                        <span className="text-gray-600">{title}</span>
+                        <span className="text-2xl">{icon}</span>
+                    </div>
+                    <p className="text-3xl font-bold text-purple-600">{value}</p>
+                </div>
+            );
+        }
+
+        
+
+
+
+
+        // // 학생 관리 컴포넌트
+        // function StudentManagement({ students }) {
+        //     return (
+        //         <div>
+        //             <h3 className="text-xl font-bold text-gray-800 mb-4">학생 진도 현황</h3>
+        //             <div className="overflow-x-auto">
+        //                 <table className="w-full">
+        //                     <thead>
+        //                         <tr className="border-b border-gray-200">
+        //                             <th className="text-left py-3 px-4 text-gray-600 font-medium">이름</th>
+        //                             <th className="text-left py-3 px-4 text-gray-600 font-medium">학년</th>
+        //                             <th className="text-center py-3 px-4 text-gray-600 font-medium">완료 세션</th>
+        //                             <th className="text-center py-3 px-4 text-gray-600 font-medium">평균 점수</th>
+                                    
+        //                         </tr>
+        //                     </thead>
+        //                     <tbody>
+        //                         {students.map(student => (
+        //                             <tr key={student.id} className="border-b border-gray-100 hover:bg-gray-50">
+        //                                 <td className="py-3 px-4 font-medium text-gray-800">{student.name}</td>
+        //                                 <td className="py-3 px-4 text-gray-600">{student.grade}</td>
+        //                                 <td className="py-3 px-4 text-center text-gray-600">{student.sessions}</td>
+        //                                 <td className="py-3 px-4 text-center">
+        //                                     <span className={`font-medium ${
+        //                                         student.avgScore >= 80 ? 'text-green-600' : 
+        //                                         student.avgScore >= 60 ? 'text-yellow-600' : 'text-red-600'
+        //                                     }`}>
+        //                                         {student.avgScore}점
+        //                                     </span>
+        //                                 </td>
+                                        
+        //                             </tr>
+        //                         ))}
+        //                     </tbody>
+        //                 </table>
+        //             </div>
+        //         </div>
+        //     );
+        // }
+        function StudentManagement({ students, onDeleteStudent }) {
+            return (
+                <div>
+                    <h3 className="text-xl font-bold text-gray-800 mb-4">학생 진도 현황</h3>
+                    <div className="overflow-x-auto">
+                        <table className="w-full">
+                            <thead>
+                                <tr className="border-b border-gray-200">
+                                    <th className="text-left py-3 px-4 text-gray-600 font-medium">이름</th>
+                                    <th className="text-left py-3 px-4 text-gray-600 font-medium">학년</th>
+                                    <th className="text-center py-3 px-4 text-gray-600 font-medium">완료 세션</th>
+                                    <th className="text-center py-3 px-4 text-gray-600 font-medium">평균 점수</th>
+                                    <th className="text-center py-3 px-4 text-gray-600 font-medium">관리</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {students.map(student => (
+                                    <tr key={student.id} className="border-b border-gray-100 hover:bg-gray-50">
+                                        <td className="py-3 px-4 font-medium text-gray-800">{student.name}</td>
+                                        <td className="py-3 px-4 text-gray-600">{student.grade}</td>
+                                        <td className="py-3 px-4 text-center text-gray-600">{student.sessions}</td>
+                                        <td className="py-3 px-4 text-center">
+                                            <span className={`font-medium ${
+                                                student.avgScore >= 80 ? 'text-green-600' : 
+                                                student.avgScore >= 60 ? 'text-yellow-600' : 'text-red-600'
+                                            }`}>
+                                                {student.avgScore}점
+                                            </span>
+                                        </td>
+                                        <td className="py-3 px-4 text-center">
+                                            <button
+                                                onClick={() => onDeleteStudent(student.id)}
+                                                className="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600"
+                                            >
+                                                삭제
+                                            </button>
+                                        </td>
+                                    </tr>
+                                ))}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            );
+        }
+
+
+
+
+        // 콘텐츠 관리
+        function ContentManagement({ contents, setContents, newContent, setNewContent, handleAddContent }) {
+            // 삭제 함수 추가
+            const handleDeleteContent = async (contentId) => {
+                if (!confirm('정말 이 콘텐츠를 삭제하시겠습니까?')) {
+                    return;
+                }
+
+                try {
+                    const response = await fetch(`/api/categories/${contentId}`, {
+                        method: 'DELETE',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        }
+                    });
+
+                    if (response.ok) {
+                        // 성공 시 UI에서 제거
+                        setContents(contents.filter(content => content.id !== contentId));
+                        alert('콘텐츠가 삭제되었습니다.');
+                    } else {
+                        const data = await response.json();
+                        alert(data.error || '삭제에 실패했습니다.');
+                    }
+                } catch (error) {
+                    console.error('Delete error:', error);
+                    alert('삭제 중 오류가 발생했습니다.');
+                }
+            };
+
+            return (
+                <div>
+                    <h3 className="text-xl font-bold text-gray-800 mb-4">학습 콘텐츠</h3>
+
+                    <div className="bg-purple-50 rounded-lg p-6 mb-6">
+                        <h4 className="font-semibold text-gray-800 mb-4">새 콘텐츠 추가</h4>
+                        <div className="grid md:grid-cols-4 gap-4">
+                            <input
+                                type="text"
+                                value={newContent.title}
+                                onChange={(e) => setNewContent({...newContent, title: e.target.value})}
+                                placeholder="콘텐츠 제목"
+                                className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500"
+                            />
+                            <select
+                                value={newContent.level}
+                                onChange={(e) => setNewContent({...newContent, level: e.target.value})}
+                                className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500"
+                            >
+                                <option value="">Select grade</option>
+                                <option value="Elementary1">Elementary Grade 1</option>
+                                <option value="Elementary2">Elementary Grade 2</option>
+                                <option value="Elementary3">Elementary Grade 3</option>
+                                <option value="Elementary4">Elementary Grade 4</option>
+                                <option value="Elementary5">Elementary Grade 5</option>
+                                <option value="Elementary6">Elementary Grade 6</option>
+                                <option value="Middle1">Middle School Grade 1</option>
+                                <option value="Middle2">Middle School Grade 2</option>
+                                <option value="Middle3">Middle School Grade 3</option>
+                                <option value="High1">High School Grade 1</option>
+                                <option value="High2">High School Grade 2</option>
+                                <option value="High3">High School Grade 3</option>
+                            </select>
+                            
+                            <button
+                                onClick={handleAddContent}
+                                className="bg-purple-600 text-white px-4 py-2 rounded-lg hover:bg-purple-700 transition"
+                            >
+                                추가하기
+                            </button>
+                        </div>
+                    </div>
+
+                    <div className="space-y-3">
+                        {contents.map(content => (
+                            <div key={content.id} className="border border-gray-200 rounded-lg p-4 flex justify-between items-center">
+                                <div>
+                                    <h5 className="font-semibold text-gray-800">{content.title}</h5>
+                                    <div className="flex gap-3 text-sm text-gray-600 mt-1">
+                                        <span>📊 {content.level}</span>
+                                        <span>❓ {content.questions}문제</span>
+                                        
+                                    </div>
+                                </div>
+                                <div className="flex gap-2">
+                                    <button 
+                                        onClick={() => handleDeleteContent(content.id)}
+                                        className="px-4 py-2 text-sm bg-red-100 text-red-700 rounded-lg hover:bg-red-200 transition"
+                                    >
+                                        삭제
+                                    </button>
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            );
+        }
+
+        // 문제 생성 컴포넌트
+        function QuestionGeneration({ questions, onAddQuestions, contents }) {
+            const [activeMethod, setActiveMethod] = React.useState('ai'); // AI / Manual 선택
+            const [loading, setLoading] = React.useState(false);
+            const [aiParams, setAiParams] = React.useState({
+                topic: '',
+                level: '',
+                count: 3,
+                questionType: 'mixed'
+            });
+            const [manualQuestion, setManualQuestion] = React.useState({
+                type: 'multiple-choice',
+                level: '',
+                question: '',
+                options: ['', '', '', ''],
+                correctAnswer: '',
+                hint: ''
+            });
+            const [categoryTitle, setCategoryTitle] = React.useState('');
+            const [categories, setCategories] = React.useState([]);
+            const [selectedCategory, setSelectedCategory] = React.useState(null);
+            const [categoryQuestions, setCategoryQuestions] = React.useState([]);
+
+            // 카테고리 목록 불러오기
+            React.useEffect(() => {
+                fetchCategories();
+            }, []);
+
+            const fetchCategories = async () => {
+                try {
+                    const res = await fetch('/api/categories');
+                    const data = await res.json();
+                    setCategories(data);
+                } catch (err) {
+                    console.error('카테고리 불러오기 실패:', err);
+                }
+            };
+
+            // 특정 카테고리의 문제 불러오기
+            const fetchQuestions = async (categoryId) => {
+                setLoading(true);
+                try {
+                    const res = await fetch(`/api/categories/${categoryId}/questions`);
+                    const data = await res.json();
+                    setCategoryQuestions(data);
+                    setSelectedCategory(categoryId);
+                } catch (err) {
+                    console.error('문제 불러오기 실패:', err);
+                    setCategoryQuestions([]);
+                } finally {
+                    setLoading(false);
+                }
+            };
+
+            // AI 생성
+            const handleAIGenerate = async () => {
+                if (!aiParams.topic.trim()) return alert('주제를 입력해주세요');
+                if (!aiParams.level.trim()) return alert('학년을 선택해주세요');
+                setLoading(true);
+                try {
+                    // 1. AI로 문제 생성
+                    const aiRes = await fetch('/api/ai-generate-questions', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(aiParams)
+                    });
+                    const aiData = await aiRes.json();
+                    if (!aiData.success) return alert('AI 생성 실패: ' + aiData.error);
+
+                    // 2. 새 카테고리 생성 또는 기존 카테고리 찾기
+                    let categoryId;
+                    
+                    // 같은 이름의 카테고리가 있는지 확인
+                    const existingCategory = categories.find(c => c.title === aiParams.topic);
+                    
+                    if (existingCategory) {
+                        // 기존 카테고리에 추가할지 물어보기
+                        const useExisting = confirm(`"${aiParams.topic}" 카테고리가 이미 존재합니다. 여기에 문제를 추가하시겠습니까?`);
+                        if (useExisting) {
+                            categoryId = existingCategory.id;
+                        } else {
+                            return; // 취소
+                        }
+                    } else {
+                        // 새 카테고리 생성
+                        const categoryRes = await fetch('/api/categories', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({
+                                title: aiParams.topic,
+                                grade: aiParams.level,
+                                description: `AI generated questions for ${aiParams.topic}`
+                            })
+                        });
+                        const categoryData = await categoryRes.json();
+                        if (!categoryData.success) {
+                            return alert('카테고리 생성 실패: ' + categoryData.error);
+                        }
+                        categoryId = categoryData.category_id;
+                    }
+
+                    // 3. 문제 저장 (categoryId 포함)
+                    const payload = {
+                        categoryId: categoryId,
+                        questions: aiData.questions
+                    };
+
+                    const saveRes = await fetch('/api/questions', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(payload)
+                    });
+
+                    const saveData = await saveRes.json();
+                    if (saveData.success) {
+                        alert('AI 생성 문제 저장 완료!');
+                        fetchCategories();
+                        setAiParams({ topic: '', level: '', count: 3, questionType: 'mixed' });
+                    } else {
+                        alert('저장 실패: ' + saveData.error);
+                    }
+                } catch (err) {
+                    console.error(err);
+                    alert('AI 생성 중 오류 발생');
+                } finally {
+                    setLoading(false);
+                }
+            };
+
+            // 수동 추가
+            const handleManualAdd = async () => {
+                if (!selectedCategory) {
+                    alert('카테고리를 선택하세요.');
+                    return;
+                }
+                if (!manualQuestion.question.trim()) {
+                    alert('문제를 입력해주세요');
+                    return;
+                }
+                if (manualQuestion.type === 'multiple-choice') {
+                    if (manualQuestion.options.some(opt => !opt.trim())) {
+                        alert('모든 선택지를 입력해주세요');
+                        return;
+                    }
+                    if (!manualQuestion.correctAnswer.trim()) {
+                        alert('정답을 입력해주세요');
+                        return;
+                    }
+                }
+
+                try {
+                    const payload = {
+                        categoryId: selectedCategory.id, // 기존 categories.id
+                        questions: [
+                            {
+                                type: manualQuestion.type,
+                                level: manualQuestion.level,
+                                question: manualQuestion.question,
+                                options: manualQuestion.type === 'multiple-choice' ? manualQuestion.options : [],
+                                correctAnswer: manualQuestion.correctAnswer,
+                                hint: manualQuestion.hint || ''
+                            }
+                        ]
+                    };
+
+                    const res = await fetch('/api/questions', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(payload)
+                    });
+                    const data = await res.json();
+
+                    if (data.success) {
+                        alert('문제가 저장되었습니다.');
+                        if (onAddQuestions) onAddQuestions(data.inserted || []);
+                        setManualQuestion({
+                            type: 'multiple-choice',
+                            level: '',
+                            question: '',
+                            options: ['', '', '', ''],
+                            correctAnswer: '',
+                            hint: ''
+                        });
+                    } else {
+                        alert('저장 실패: ' + (data.error || JSON.stringify(data)));
+                    }
+                } catch (err) {
+                    console.error(err);
+                    alert('저장 중 오류 발생');
+                }
+            };
+
+            return (
+                <div>
+                    {/* 문제 생성 방식 선택 */}
+                    <div className="flex gap-4 mb-6">
+                        <button
+                            onClick={() => setActiveMethod('ai')}
+                            className={`flex-1 py-3 px-4 rounded-lg font-medium transition ${activeMethod === 'ai' ? 'bg-purple-600 text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'}`}
+                        >
+                            🤖 AI 자동 생성
+                        </button>
+                        <button
+                            onClick={() => setActiveMethod('manual')}
+                            className={`flex-1 py-3 px-4 rounded-lg font-medium transition ${activeMethod === 'manual' ? 'bg-purple-600 text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'}`}
+                        >
+                            ✍️ 직접 입력
+                        </button>
+                    </div>
+
+                    {/* AI 생성 UI */}
+                    {activeMethod === 'ai' && (
+                        <div className="bg-purple-50 rounded-lg p-6">
+                            <div className="grid md:grid-cols-2 gap-4 mb-4">
+                                <div>
+                                    <label className="block text-sm font-medium text-gray-700 mb-2">주제</label>
+                                    <input
+                                        type="text"
+                                        value={aiParams.topic}
+                                        onChange={(e) => setAiParams({...aiParams, topic: e.target.value})}
+                                        placeholder="예: 일상 대화, 과거시제"
+                                        className="w-full px-4 py-2 border border-gray-300 rounded-lg"
+                                    />
+                                </div>
+                                <div>
+                                    <label className="block text-sm font-medium text-gray-700 mb-2">난이도</label>
+                                    <select
+                                        value={aiParams.level}
+                                        onChange={(e) => setAiParams({...aiParams, level: e.target.value})}
+                                        className="w-full px-4 py-2 border border-gray-300 rounded-lg"
+                                    >
+                                        <option value="">Select grade</option>
+                                        <option value="Elementary1">Elementary Grade 1</option>
+                                        <option value="Elementary2">Elementary Grade 2</option>
+                                        <option value="Elementary3">Elementary Grade 3</option>
+                                        <option value="Elementary4">Elementary Grade 4</option>
+                                        <option value="Elementary5">Elementary Grade 5</option>
+                                        <option value="Elementary6">Elementary Grade 6</option>
+                                        <option value="Middle1">Middle School Grade 1</option>
+                                        <option value="Middle2">Middle School Grade 2</option>
+                                        <option value="Middle3">Middle School Grade 3</option>
+                                        <option value="High1">High School Grade 1</option>
+                                        <option value="High2">High School Grade 2</option>
+                                        <option value="High3">High School Grade 3</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label className="block text-sm font-medium text-gray-700 mb-2">문제 수</label>
+                                    <input
+                                        type="number"
+                                        value={aiParams.count}
+                                        onChange={(e) => setAiParams({...aiParams, count: parseInt(e.target.value)})}
+                                        min="1"
+                                        max="10"
+                                        className="w-full px-4 py-2 border border-gray-300 rounded-lg"
+                                    />
+                                </div>
+                                <div>
+                                    <label className="block text-sm font-medium text-gray-700 mb-2">문제 유형</label>
+                                    <select
+                                        value={aiParams.questionType}
+                                        onChange={(e) => setAiParams({...aiParams, questionType: e.target.value})}
+                                        className="w-full px-4 py-2 border border-gray-300 rounded-lg"
+                                    >
+                                        <option value="mixed">혼합</option>
+                                        <option value="multiple-choice">객관식만</option>
+                                        <option value="writing">서술형만</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <button
+                                onClick={handleAIGenerate}
+                                disabled={loading}
+                                className="w-full bg-purple-600 text-white py-3 px-4 rounded-lg font-medium hover:bg-purple-700 disabled:bg-purple-300"
+                            >
+                                {loading ? '생성 중...' : '문제 생성하기'}
+                            </button>
+                        </div>
+                    )}
+
+                    {/* 직접 입력 탭 */}
+                    {activeMethod === 'manual' && (
+                        <div className="bg-blue-50 rounded-lg p-6">
+                            <h4 className="font-semibold text-gray-800 mb-4">문제 직접 입력</h4>
+                            <div className="space-y-4">
+                                <div>
+                                    <label className="block text-sm font-medium text-gray-700 mb-2">카테고리(주제)</label>
+                                    <select
+                                        value={selectedCategory?.id || ""}
+                                        onChange={(e) => {
+                                            const cat = contents.find(c => c.id === parseInt(e.target.value));
+                                            setSelectedCategory(cat || null);
+                                        }}
+                                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                                    >
+                                        <option value="">카테고리를 선택하세요</option>
+                                        {contents.map(c => (
+                                            <option key={c.id} value={c.id}>
+                                                {c.title} ({c.level})
+                                            </option>
+                                        ))}
+                                    </select>
+                                </div>
+
+                                <div className="grid md:grid-cols-2 gap-4">
+                                    <div>
+                                        <label className="block text-sm font-medium text-gray-700 mb-2">문제 유형</label>
+                                        <select
+                                            value={manualQuestion.type}
+                                            onChange={e => setManualQuestion({...manualQuestion, type: e.target.value})}
+                                            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                                        >
+                                            <option value="multiple-choice">객관식</option>
+                                            <option value="writing">서술형</option>
+                                        </select>
+                                    </div>
+                                    <div>
+                                        
+                                        
+                                    </div>
+                                </div>
+
+                                <div>
+                                    <label className="block text-sm font-medium text-gray-700 mb-2">문제</label>
+                                    <textarea
+                                        value={manualQuestion.question}
+                                        onChange={e => setManualQuestion({...manualQuestion, question: e.target.value})}
+                                        rows="3"
+                                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                                        placeholder="문제를 입력하세요"
+                                    />
+                                </div>
+
+                                {manualQuestion.type === 'multiple-choice' && (
+                                    <>
+                                        <div>
+                                            <label className="block text-sm font-medium text-gray-700 mb-2">선택지</label>
+                                            {manualQuestion.options.map((opt, i) => (
+                                                <input
+                                                    key={i}
+                                                    type="text"
+                                                    value={opt}
+                                                    onChange={e => {
+                                                        const newOptions = [...manualQuestion.options];
+                                                        newOptions[i] = e.target.value;
+                                                        setManualQuestion({...manualQuestion, options: newOptions});
+                                                    }}
+                                                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 mb-2"
+                                                    placeholder={`선택지 ${i+1}`}
+                                                />
+                                            ))}
+                                        </div>
+                                        <div>
+                                            <label className="block text-sm font-medium text-gray-700 mb-2">정답</label>
+                                            <input
+                                                type="text"
+                                                value={manualQuestion.correctAnswer}
+                                                onChange={e => setManualQuestion({...manualQuestion, correctAnswer: e.target.value})}
+                                                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                                                placeholder="정답을 입력하세요"
+                                            />
+                                        </div>
+                                    </>
+                                )}
+
+                                <div>
+                                    <label className="block text-sm font-medium text-gray-700 mb-2">정답</label>
+                                            <input
+                                                type="text"
+                                                value={manualQuestion.correctAnswer}
+                                                onChange={e => setManualQuestion({...manualQuestion, correctAnswer: e.target.value})}
+                                                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                                                placeholder="정답을 입력하세요"
+                                            />
+                                </div>
+                                <div>
+                                    <label className="block text-sm font-medium text-gray-700 mb-2">힌트 (선택)</label>
+                                    <input
+                                        type="text"
+                                        value={manualQuestion.hint}
+                                        onChange={e => setManualQuestion({...manualQuestion, hint: e.target.value})}
+                                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                                        placeholder="힌트를 입력하세요"
+                                    />
+                                </div>
+
+                                <button
+                                    onClick={handleManualAdd}
+                                    className="w-full bg-blue-600 text-white py-3 px-4 rounded-lg font-medium hover:bg-blue-700 transition"
+                                >
+                                    문제 추가하기
+                                </button>
+                            </div>
+                        </div>
+                    )}
+
+                    {/* 카테고리별 문제 확인 */}
+                    <div className="bg-white rounded-xl card-shadow p-6 mt-6">
+                        <h3 className="text-xl font-bold text-gray-800 mb-4">카테고리별 문제 확인</h3>
+                        {categories.length === 0 ? (
+                            <p className="text-gray-500 text-center py-8">아직 생성된 카테고리가 없습니다.</p>
+                        ) : (
+                            <div className="space-y-4">
+                                {categories.map(cat => (
+                                    <div key={cat.id} className="border border-gray-200 rounded-lg">
+                                        <button
+                                            onClick={() => fetchQuestions(cat.id)}
+                                            className="w-full p-4 text-left hover:bg-gray-50 flex justify-between items-center"
+                                        >
+                                            <div>
+                                                <h4 className="font-semibold text-gray-800">{cat.title}</h4>
+                                                <p className="text-sm text-gray-600">📊 {cat.grade}</p>
+                                            </div>
+                                            <span className="text-purple-600">{selectedCategory === cat.id ? '▼' : '▶'}</span>
+                                        </button>
+
+                                        {selectedCategory === cat.id && (
+                                            <div className="border-t border-gray-200 p-4 bg-gray-50">
+                                                {loading ? (
+                                                    <p className="text-center text-gray-500">문제 불러오는 중...</p>
+                                                ) : categoryQuestions.length === 0 ? (
+                                                    <p className="text-center text-gray-500">이 카테고리에는 문제가 없습니다.</p>
+                                                ) : (
+                                                    <div className="space-y-4">
+                                                        {categoryQuestions.map((q, idx) => (
+                                                            <div key={q.id} className="bg-white border border-gray-200 rounded-lg p-4">
+                                                                <div className="flex items-start gap-3">
+                                                                    <span className="flex-shrink-0 w-8 h-8 bg-purple-100 text-purple-600 rounded-full flex items-center justify-center font-semibold">{idx+1}</span>
+                                                                    <div className="flex-1">
+                                                                        <div className="flex gap-2 mb-2">
+                                                                            <span className="text-xs bg-blue-100 text-blue-700 px-2 py-1 rounded">
+                                                                                {q.question_type === 'objective' ? '객관식' : '서술형'}
+                                                                            </span>
+                                                                        </div>
+                                                                        <p className="font-medium text-gray-800 mb-3">{q.question_text}</p>
+                                                                        {q.question_type === 'objective' && q.choices && (
+                                                                            <div className="mb-3 pl-4 space-y-1">
+                                                                                {q.choices.map((c, i) => (
+                                                                                    <p key={i} className="text-sm text-gray-700">{c.number}. {c.text}</p>
+                                                                                ))}
+                                                                            </div>
+                                                                        )}
+                                                                        <div className="bg-green-50 border border-green-200 rounded p-3">
+                                                                            <p className="text-sm font-medium text-green-800">
+                                                                                ✓ 정답: <span className="text-green-700">{q.answer}</span>
+                                                                            </p>
+                                                                        </div>
+                                                                        {q.hint && (
+                                                                            <div className="mt-2 bg-yellow-50 border border-yellow-200 rounded p-3">
+                                                                                <p className="text-sm text-yellow-800">💡 힌트: {q.hint}</p>
+                                                                            </div>
+                                                                        )}
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        ))}
+                                                    </div>
+                                                )}
+                                            </div>
+                                        )}
+                                    </div>
+                                ))}
+                            </div>
+                        )}
+                    </div>
+                </div>
+            );
+        }
+
+        ReactDOM.render(<App />, document.getElementById('root'));
+        
+        {% endraw %}
+    </script>
+</body>
+</html>
