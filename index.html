@@ -23,10 +23,8 @@
     <script type="text/babel">
         const { useState, useEffect } = React;
         const userName = '게스트';
-        const STORAGE_KEY = 'mathweb-quiz30';
-        const QUIZ_SIZE = 30;
+        const STORAGE_KEY = 'mathweb-units30';
 
-        // GitHub Pages는 저장소 하위 경로에서 열리므로 절대 경로를 쓰지 않는다.
         function renderMathText(text) {
             if (text === null || text === undefined) return '';
             const parts = String(text).split(/(\$[^$]+\$)/);
@@ -36,7 +34,6 @@
                     try {
                         return katex.renderToString(part.slice(1, -1), { throwOnError: false });
                     } catch (e) {
-                        console.warn('KaTeX 렌더 실패:', e);
                         return part;
                     }
                 }
@@ -64,39 +61,27 @@
             localStorage.setItem(STORAGE_KEY, JSON.stringify(progress));
         }
 
-        // 화면에는 단원 6개가 아니라 문제 30개가 보여야 한다.
-        // 단원마다 5문제씩 뽑아 한 세트로 묶는다.
-        function pickQuiz() {
+        // 영어 대시보드와 같이 단원 카드가 여러 줄 보이게, 6단원을 2문제씩 묶어 30개로 나눈다.
+        function buildUnits() {
             const bank = window.QUESTION_BANK || { categories: [], questions: [] };
-            const topicById = {};
-            (bank.categories || []).forEach(c => { topicById[c.id] = c.name || ''; });
-            const grouped = {};
-            (bank.questions || []).forEach(q => {
-                if (!grouped[q.category_id]) grouped[q.category_id] = [];
-                grouped[q.category_id].push(q);
+            const units = [];
+            let id = 1;
+            (bank.categories || []).forEach(cat => {
+                const questions = (bank.questions || []).filter(q => q.category_id === cat.id);
+                for (let i = 0; i < questions.length; i += 2) {
+                    const chunk = questions.slice(i, i + 2);
+                    if (!chunk.length) continue;
+                    units.push({
+                        id: id,
+                        title: cat.name + ' ' + (Math.floor(i / 2) + 1),
+                        questions: chunk
+                    });
+                    id += 1;
+                }
             });
-            const picked = [];
-            (bank.categories || []).forEach(c => {
-                (grouped[c.id] || []).slice(0, 5).forEach(q => {
-                    picked.push(Object.assign({}, q, { topic: topicById[c.id] || '' }));
-                });
-            });
-            return picked.slice(0, QUIZ_SIZE);
+            return units.slice(0, 30);
         }
 
-        function resetQuiz() {
-            saveProgress({ answered: {} });
-        }
-
-        function recordAnswer(questionId, isCorrect) {
-            const progress = loadProgress();
-            const answered = progress.answered || {};
-            answered[questionId] = isCorrect;
-            progress.answered = answered;
-            saveProgress(progress);
-        }
-
-        // 서버 grade_objective와 같은 기준: 선택 텍스트가 정답 보기와 같으면 정답
         function gradeObjective(question, studentAnswer) {
             const choices = question.choices || [];
             const answerIndex = question.answer;
@@ -104,10 +89,7 @@
                 ? choices[answerIndex]
                 : '';
             const explanation = question.explanation || '';
-            let isCorrect = false;
-            if (typeof studentAnswer === 'string') {
-                isCorrect = studentAnswer.trim() === String(correctText).trim();
-            }
+            const isCorrect = typeof studentAnswer === 'string' && studentAnswer.trim() === String(correctText).trim();
             const feedback = isCorrect
                 ? `정답입니다! ${explanation}`.trim()
                 : `아쉽네요! 정답은 '${correctText}' 입니다. ${explanation}`.trim();
@@ -119,7 +101,6 @@
                 const graded = gradeObjective(q, '');
                 return {
                     id: q.id,
-                    topic: q.topic || '',
                     question: q.question_text || '',
                     options: q.choices || [],
                     correctAnswer: graded.correctText,
@@ -129,28 +110,54 @@
             });
         }
 
+        function resetUnit(unitId) {
+            const progress = loadProgress();
+            progress[unitId] = { answered: {} };
+            saveProgress(progress);
+        }
+
+        function recordAnswer(unitId, questionId, isCorrect) {
+            const progress = loadProgress();
+            const slot = progress[unitId] || { answered: {} };
+            slot.answered = slot.answered || {};
+            slot.answered[questionId] = isCorrect;
+            progress[unitId] = slot;
+            saveProgress(progress);
+        }
+
+        function decorateUnits(units) {
+            const progress = loadProgress();
+            return units.map(unit => {
+                const answered = (progress[unit.id] && progress[unit.id].answered) || {};
+                const questionCount = Object.keys(answered).length;
+                const correctCount = Object.values(answered).filter(Boolean).length;
+                const total = unit.questions.length;
+                const done = total > 0 && questionCount >= total;
+                const score = done ? Math.round((correctCount / questionCount) * 100) : 0;
+                return Object.assign({}, unit, { done, score });
+            });
+        }
+
         function App() {
             const [view, setView] = useState('dashboard');
-            const quiz = pickQuiz();
+            const [selectedUnit, setSelectedUnit] = useState(null);
+            const units = buildUnits();
 
-            const handleStart = () => {
-                resetQuiz();
+            const handleStart = (unit) => {
+                resetUnit(unit.id);
+                setSelectedUnit(unit);
                 setView('learning');
             };
 
             return (
                 <div className="min-h-screen bg-gray-50">
                     {view === 'dashboard' && (
-                        <StudentDashboard
-                            userName={userName}
-                            quiz={quiz}
-                            onStart={handleStart}
-                        />
+                        <StudentDashboard userName={userName} units={units} onStart={handleStart} />
                     )}
-                    {view === 'learning' && (
+                    {view === 'learning' && selectedUnit && (
                         <LearningSession
                             userName={userName}
-                            quiz={quiz}
+                            unit={selectedUnit}
                             onBack={() => setView('dashboard')}
                         />
                     )}
@@ -158,9 +165,8 @@
             );
         }
 
-        function StudentDashboard({ userName, quiz, onStart }) {
-            const [answeredCount, setAnsweredCount] = React.useState(0);
-            const [correctCount, setCorrectCount] = React.useState(0);
+        function StudentDashboard({ userName, units, onStart }) {
+            const [rows, setRows] = React.useState([]);
 
             const handleLogout = () => {
                 localStorage.removeItem(STORAGE_KEY);
@@ -168,15 +174,13 @@
             };
 
             React.useEffect(() => {
-                const answered = loadProgress().answered || {};
-                const ids = new Set(quiz.map(q => String(q.id)));
-                const keys = Object.keys(answered).filter(id => ids.has(String(id)));
-                setAnsweredCount(keys.length);
-                setCorrectCount(keys.filter(id => answered[id]).length);
-            }, [quiz]);
+                setRows(decorateUnits(units));
+            }, [units]);
 
-            const remaining = Math.max(quiz.length - answeredCount, 0);
-            const finished = quiz.length > 0 && answeredCount >= quiz.length;
+            const completed = rows.filter(row => row.done);
+            const averageScore = completed.length
+                ? Math.round((completed.reduce((sum, row) => sum + row.score, 0) / completed.length) * 10) / 10
+                : 0;
 
             return (
                 <div className="min-h-screen bg-gray-50">
@@ -190,23 +194,27 @@
                         </div>
                     </nav>
                     <div className="max-w-7xl mx-auto px-4 py-8">
-                        <h2 className="text-3xl font-bold mb-6">문제 {quiz.length}개</h2>
+                        <h2 className="text-3xl font-bold mb-6">학습 대시보드</h2>
                         <div className="grid md:grid-cols-3 gap-6 mb-8">
-                            <StatCard title="전체 문제" value={quiz.length} />
-                            <StatCard title="남은 문제" value={remaining} />
-                            <StatCard title="맞힌 문제" value={correctCount} />
+                            <StatCard title="남은 학습" value={rows.length - completed.length} />
+                            <StatCard title="완료한 학습" value={completed.length} />
+                            <StatCard title="평균 점수" value={averageScore} />
                         </div>
-                        <button
-                            onClick={onStart}
-                            className="mb-6 w-full bg-purple-600 text-white py-3 px-4 rounded-lg font-medium hover:bg-purple-700"
-                        >
-                            {finished ? `문제 ${quiz.length}개 다시 풀기` : `문제 ${quiz.length}개 풀기`}
-                        </button>
                         <div className="bg-white rounded-xl p-6 card-shadow space-y-4">
-                            {quiz.map((q, index) => (
-                                <div key={q.id} className="border p-4 rounded">
-                                    <p className="text-sm text-purple-600 font-medium mb-1">문제 {index + 1} · {q.topic}</p>
-                                    <p className="text-gray-800"><MathText text={q.question_text} /></p>
+                            {rows.map(row => (
+                                <div key={row.id} className="flex justify-between items-center border p-4 rounded">
+                                    <div>
+                                        <h3 className="font-bold">{row.title}</h3>
+                                        {row.done && (
+                                            <p className="text-sm text-green-600">완료 · 점수 {row.score}</p>
+                                        )}
+                                    </div>
+                                    <button
+                                        onClick={() => onStart(row)}
+                                        className="bg-purple-600 text-white px-4 py-2 rounded"
+                                    >
+                                        {row.done ? '다시 풀기' : '시작하기'}
+                                    </button>
                                 </div>
                             ))}
                         </div>
@@ -224,8 +232,8 @@
             );
         }
 
-        function LearningSession({ userName, quiz, onBack }) {
-            const [questions] = useState(() => formatQuestions(quiz));
+        function LearningSession({ userName, unit, onBack }) {
+            const [questions] = useState(() => formatQuestions(unit.questions));
             const [currentQuestion, setCurrentQuestion] = useState(0);
             const [answers, setAnswers] = useState({});
             const [feedback, setFeedback] = useState(null);
@@ -234,15 +242,14 @@
             const [sessionScore, setSessionScore] = useState(0);
 
             const handleAnswer = (answer) => {
-                setAnswers({ ...answers, [currentQuestion]: answer });
+                setAnswers(Object.assign({}, answers, { [currentQuestion]: answer }));
             };
 
             const handleSubmitAnswer = () => {
                 setSubmitting(true);
-                const userAnswer = answers[currentQuestion];
                 const question = questions[currentQuestion];
-                const result = gradeObjective(question.raw, userAnswer);
-                recordAnswer(question.id, result.isCorrect);
+                const result = gradeObjective(question.raw, answers[currentQuestion]);
+                recordAnswer(unit.id, question.id, result.isCorrect);
                 setFeedback({
                     isCorrect: result.isCorrect,
                     feedback: result.feedback,
@@ -267,19 +274,8 @@
 
             if (questions.length === 0) {
                 return (
-                    <div className="min-h-screen bg-gray-50">
-                        <nav className="bg-white shadow-sm">
-                            <div className="max-w-7xl mx-auto px-4 h-16 flex items-center">
-                                <h1 className="text-2xl font-bold text-purple-600">AI 수학 튜터</h1>
-                            </div>
-                        </nav>
-                        <div className="max-w-3xl mx-auto px-4 py-12">
-                            <div className="bg-white rounded-xl card-shadow p-8 text-center">
-                                <div className="text-6xl mb-4">📝</div>
-                                <h2 className="text-2xl font-bold text-gray-800 mb-4">아직 문제가 없습니다</h2>
-                                <button onClick={onBack} className="bg-purple-600 text-white py-3 px-6 rounded-lg">돌아가기</button>
-                            </div>
-                        </div>
+                    <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+                        <button onClick={onBack} className="bg-purple-600 text-white py-3 px-6 rounded-lg">돌아가기</button>
                     </div>
                 );
             }
@@ -296,12 +292,9 @@
                             <div className="bg-white rounded-xl card-shadow p-8 text-center animate-fade-in">
                                 <div className="text-6xl mb-4">🎉</div>
                                 <h2 className="text-3xl font-bold text-gray-800 mb-2">학습 완료!</h2>
-                                <p className="text-gray-600 mb-4">문제 {questions.length}개를 모두 풀었습니다.</p>
+                                <p className="text-gray-600 mb-4">{unit.title} 학습을 마쳤습니다!</p>
                                 <p className="text-5xl font-bold text-purple-600 mb-8">점수: {sessionScore}%</p>
-                                <button
-                                    onClick={onBack}
-                                    className="w-full bg-purple-600 text-white py-3 px-4 rounded-lg font-medium hover:bg-purple-700 transition"
-                                >
+                                <button onClick={onBack} className="w-full bg-purple-600 text-white py-3 px-4 rounded-lg font-medium">
                                     학습 대시보드로 돌아가기
                                 </button>
                             </div>
@@ -319,19 +312,17 @@
                             <h1 className="text-2xl font-bold text-purple-600">AI 수학 튜터</h1>
                             <div className="flex items-center gap-4">
                                 <span className="text-gray-700">👋 안녕하세요, {userName}</span>
-                                <button onClick={onBack} className="px-4 py-2 text-sm text-gray-700 hover:text-gray-900">← 돌아가기</button>
+                                <button onClick={onBack} className="px-4 py-2 text-sm text-gray-700">← 돌아가기</button>
                             </div>
                         </div>
                     </nav>
                     <div className="max-w-3xl mx-auto px-4 py-8">
                         <div className="mb-4 flex justify-between items-center">
                             <p className="text-gray-600 font-medium">문제 {currentQuestion + 1}/{questions.length}</p>
-                            <span className="text-sm text-purple-600 font-medium">{question.topic}</span>
+                            <span className="text-sm text-purple-600 font-medium">{unit.title}</span>
                         </div>
                         <div className="bg-white rounded-xl card-shadow p-8 mb-6 animate-fade-in">
-                            <p className="text-xl text-gray-800 mb-6">
-                                <MathText text={question.question} />
-                            </p>
+                            <p className="text-xl text-gray-800 mb-6"><MathText text={question.question} /></p>
                             <div className="space-y-2">
                                 {question.options.map((opt, i) => (
                                     <button
@@ -339,9 +330,7 @@
                                         onClick={() => handleAnswer(opt)}
                                         disabled={feedback !== null}
                                         className={`w-full p-4 border rounded-lg text-left transition ${
-                                            answers[currentQuestion] === opt
-                                                ? 'border-purple-500 bg-purple-50'
-                                                : 'border-gray-200 hover:border-purple-300'
+                                            answers[currentQuestion] === opt ? 'border-purple-500 bg-purple-50' : 'border-gray-200 hover:border-purple-300'
                                         } ${feedback !== null ? 'cursor-not-allowed opacity-60' : ''}`}
                                     >
                                         <MathText text={opt} />
@@ -352,7 +341,7 @@
                                 <button
                                     onClick={handleSubmitAnswer}
                                     disabled={submitting}
-                                    className="mt-6 w-full bg-purple-600 text-white py-3 px-4 rounded-lg font-medium hover:bg-purple-700 transition disabled:opacity-50"
+                                    className="mt-6 w-full bg-purple-600 text-white py-3 px-4 rounded-lg font-medium disabled:opacity-50"
                                 >
                                     {submitting ? '채점 중...' : '답 제출하기'}
                                 </button>
@@ -365,9 +354,7 @@
                                         <MathText text={feedback.feedback} />
                                     </p>
                                     {feedback.correction && (
-                                        <p className="text-gray-700 mt-2">
-                                            정답: <strong><MathText text={feedback.correction} /></strong>
-                                        </p>
+                                        <p className="text-gray-700 mt-2">정답: <strong><MathText text={feedback.correction} /></strong></p>
                                     )}
                                 </div>
                                 {feedback.explanation && (
@@ -376,10 +363,7 @@
                                         <p className="text-gray-700"><MathText text={feedback.explanation} /></p>
                                     </div>
                                 )}
-                                <button
-                                    onClick={handleNextQuestion}
-                                    className="w-full bg-purple-600 text-white py-3 rounded-lg font-medium hover:bg-purple-700 transition"
-                                >
+                                <button onClick={handleNextQuestion} className="w-full bg-purple-600 text-white py-3 rounded-lg font-medium">
                                     {currentQuestion < questions.length - 1 ? '다음 문제' : '결과 보기'}
                                 </button>
                             </div>
@@ -398,8 +382,7 @@
                 window.QUESTION_BANK = data;
                 ReactDOM.render(<App />, document.getElementById('root'));
             })
-            .catch(err => {
-                console.error(err);
+            .catch(() => {
                 document.getElementById('root').textContent = '문제를 불러오지 못했습니다.';
             });
     </script>
