@@ -211,10 +211,12 @@ def student_dashboard():
     for cat in categories:
         status = user_results.get(cat['id'])
 
-        if status:
-            question_count = status.get('question_count', 0)
+        question_count = status.get('question_count', 0) if status else 0
+        total_in_category = len(get_questions_by_category(cat['id']))
+        # 단원 문제를 끝까지 풀어야 완료. 시작만 하거나 중간에 나가면 미완료
+        if status and total_in_category > 0 and question_count >= total_in_category:
             correct_count = status.get('correct_count', 0)
-            score = round((correct_count / question_count) * 100) if question_count > 0 else 0
+            score = round((correct_count / question_count) * 100)
 
             cat['done'] = True
             cat['score'] = score
@@ -226,8 +228,8 @@ def student_dashboard():
         else:
             cat['done'] = False
             cat['score'] = 0
-            cat['question_count'] = 0
-            cat['last_done'] = None
+            cat['question_count'] = question_count
+            cat['last_done'] = status.get('last_done') if status else None
 
     incompleted_sessions = len(categories) - completed_sessions
     average_score = round(total_score / completed_sessions, 1) if completed_sessions > 0 else 0
@@ -263,10 +265,12 @@ def student_dashboard_api():
     for cat in categories:
         status = user_results.get(cat['id'])
 
-        if status:
-            question_count = status.get('question_count', 0)
+        question_count = status.get('question_count', 0) if status else 0
+        total_in_category = len(get_questions_by_category(cat['id']))
+        # 단원 문제를 끝까지 풀어야 완료. 시작만 하거나 중간에 나가면 미완료
+        if status and total_in_category > 0 and question_count >= total_in_category:
             correct_count = status.get('correct_count', 0)
-            score = round((correct_count / question_count) * 100) if question_count > 0 else 0
+            score = round((correct_count / question_count) * 100)
 
             cat['done'] = True
             cat['score'] = score
@@ -279,9 +283,9 @@ def student_dashboard_api():
         else:
             cat['done'] = False
             cat['score'] = 0
-            cat['question_count'] = 0
-            cat['correct_count'] = 0
-            cat['last_done'] = None
+            cat['question_count'] = question_count
+            cat['correct_count'] = status.get('correct_count', 0) if status else 0
+            cat['last_done'] = status.get('last_done') if status else None
 
     incompleted_sessions = len(categories) - completed_sessions
     average_score = round(total_score / completed_sessions, 1) if completed_sessions else 0

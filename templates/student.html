@@ -360,11 +360,11 @@
                 }
             };
 
-            const handleNext문제 = () => {
+            const handleNextQuestion = () => {
                 setFeedback(null);
 
-                if (current문제 < questions.length - 1) {
-                    setCurrentQuestion(current문제 + 1);
+                if (currentQuestion < questions.length - 1) {
+                    setCurrentQuestion(currentQuestion + 1);
                 } else {
                     const totalScore = Math.round(
                         (questions.filter((q, idx) => answers[idx] === q.correctAnswer).length / questions.length) * 100
@@ -473,7 +473,7 @@
             <div className="max-w-3xl mx-auto px-4 py-8">
                 <div className="mb-4 flex justify-between items-center">
                     <p className="text-gray-600 font-medium">
-                        문제 {current문제 + 1}/{questions.length}
+                        문제 {currentQuestion + 1}/{questions.length}
                     </p>
                     <span className="text-sm text-purple-600 font-medium">
                         {category.title}
@@ -536,7 +536,7 @@
                             <p className={`font-semibold ${
                                 feedback.isCorrect ? 'text-green-700' : 'text-red-700'
                             }`}>
-                                {feedback.feedback}
+                                <MathText text={feedback.feedback} />
                             </p>
                             {feedback.correction && (
                                 <p className="text-gray-700 mt-2">
@@ -557,7 +557,7 @@
                             onClick={handleNextQuestion}
                             className="w-full bg-purple-600 text-white py-3 rounded-lg font-medium hover:bg-purple-700 transition"
                         >
-                            {current문제 < questions.length - 1 ? '다음 문제' : '결과 보기'}
+                            {currentQuestion < questions.length - 1 ? '다음 문제' : '결과 보기'}
                         </button>
                     </div>
                 )}

@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>수학 학습 - 학생 대시보드</title>
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        .card-shadow { box-shadow: 0 10px 25px rgba(0,0,0,0.1); }
+        .animate-fade-in { animation: fadeIn 0.5s ease-in; }
+        @keyframes fadeIn { from { opacity:0; transform:translateY(10px);} to {opacity:1; transform:translateY(0);} }
+        .katex { font-size: 1.05em; }
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+    <script type="text/babel">
+        const { useState, useEffect } = React;
+        const userName = '게스트';
+        const STORAGE_KEY = 'mathweb-progress';
+
+        // GitHub Pages는 저장소 하위 경로에서 열리므로 절대 경로를 쓰지 않는다.
+        function renderMathText(text) {
+            if (text === null || text === undefined) return '';
+            const parts = String(text).split(/(\$[^$]+\$)/);
+            return parts.map(part => {
+                if (part.length > 2 && part.startsWith('$') && part.endsWith('$')) {
+                    if (typeof katex === 'undefined') return part;
+                    try {
+                        return katex.renderToString(part.slice(1, -1), { throwOnError: false });
+                    } catch (e) {
+                        console.warn('KaTeX 렌더 실패:', e);
+                        return part;
+                    }
+                }
+                return part
+                    .replace(/&/g, '&amp;')
+                    .replace(/</g, '&lt;')
+                    .replace(/>/g, '&gt;');
+            }).join('');
+        }
+
+        function MathText({ text, className }) {
+            const html = React.useMemo(() => renderMathText(text), [text]);
+            return <span className={className} dangerouslySetInnerHTML={{ __html: html }} />;
+        }
+
+        function loadProgress() {
+            try {
+                return JSON.parse(localStorage.getItem(STORAGE_KEY)) || {};
+            } catch (e) {
+                return {};
+            }
+        }
+
+        function saveProgress(progress) {
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(progress));
+        }
+
+        function questionsOf(categoryId) {
+            return (window.QUESTION_BANK.questions || []).filter(q => q.category_id === categoryId);
+        }
+
+        // 단원 문제를 끝까지 풀어야 완료. 기록은 이 브라우저에만 남긴다.
+        function buildDashboard() {
+            const progress = loadProgress();
+            const categories = (window.QUESTION_BANK.categories || []).map(c => {
+                const total = questionsOf(c.id).length;
+                const answered = (progress[c.id] && progress[c.id].answered) || {};
+                const questionCount = Object.keys(answered).length;
+                const correctCount = Object.values(answered).filter(Boolean).length;
+                const done = total > 0 && questionCount >= total;
+                const score = done ? Math.round((correctCount / questionCount) * 100) : 0;
+                return {
+                    id: c.id,
+                    title: c.name || c.title || '',
+                    grade: c.grade || '',
+                    done,
+                    score,
+                    question_count: questionCount
+                };
+            });
+            const completed = categories.filter(c => c.done);
+            const averageScore = completed.length
+                ? Math.round((completed.reduce((sum, c) => sum + c.score, 0) / completed.length) * 10) / 10
+                : 0;
+            return {
+                categories,
+                stats: {
+                    completedSessions: completed.length,
+                    incompletedSessions: categories.length - completed.length,
+                    averageScore
+                }
+            };
+        }
+
+        function resetCategory(categoryId) {
+            const progress = loadProgress();
+            progress[categoryId] = { answered: {} };
+            saveProgress(progress);
+        }
+
+        function recordAnswer(categoryId, questionId, isCorrect) {
+            const progress = loadProgress();
+            const slot = progress[categoryId] || { answered: {} };
+            slot.answered = slot.answered || {};
+            slot.answered[questionId] = isCorrect;
+            progress[categoryId] = slot;
+            saveProgress(progress);
+        }
+
+        // 서버 grade_objective와 같은 기준: 선택 텍스트가 정답 보기와 같으면 정답
+        function gradeObjective(question, studentAnswer) {
+            const choices = question.choices || [];
+            const answerIndex = question.answer;
+            const correctText = (typeof answerIndex === 'number' && choices[answerIndex] != null)
+                ? choices[answerIndex]
+                : '';
+            const explanation = question.explanation || '';
+            let isCorrect = false;
+            if (typeof studentAnswer === 'string') {
+                isCorrect = studentAnswer.trim() === String(correctText).trim();
+            }
+            const feedback = isCorrect
+                ? `정답입니다! ${explanation}`.trim()
+                : `아쉽네요! 정답은 '${correctText}' 입니다. ${explanation}`.trim();
+            return { isCorrect, feedback, explanation, correctText };
+        }
+
+        function formatQuestions(rawList) {
+            return rawList.map(q => {
+                const graded = gradeObjective(q, '');
+                return {
+                    id: q.id,
+                    type: 'multiple-choice',
+                    question: q.question_text || '',
+                    options: q.choices || [],
+                    correctAnswer: graded.correctText,
+                    explanation: q.explanation || ''
+                };
+            });
+        }
+
+        function App() {
+            const [view, setView] = useState('dashboard');
+            const [selectedCategory, setSelectedCategory] = useState(null);
+
+            const handleStartSession = (category) => {
+                resetCategory(category.id);
+                setSelectedCategory(category);
+                setView('learning');
+            };
+
+            return (
+                <div className="min-h-screen bg-gray-50">
+                    {view === 'dashboard' && (
+                        <StudentDashboard
+                            userName={userName}
+                            onStartSession={handleStartSession}
+                        />
+                    )}
+                    {view === 'learning' && (
+                        <LearningSession
+                            userName={userName}
+                            category={selectedCategory}
+                            onBack={() => setView('dashboard')}
+                        />
+                    )}
+                </div>
+            );
+        }
+
+        function StudentDashboard({ userName, onStartSession }) {
+            const [stats, setStats] = React.useState({
+                completedSessions: 0,
+                incompletedSessions: 0,
+                averageScore: 0
+            });
+            const [categories, setCategories] = React.useState([]);
+
+            const handleLogout = () => {
+                localStorage.removeItem(STORAGE_KEY);
+                window.location.reload();
+            };
+
+            React.useEffect(() => {
+                const data = buildDashboard();
+                setStats(data.stats);
+                setCategories(data.categories);
+            }, []);
+
+            return (
+                <div className="min-h-screen bg-gray-50">
+                    <nav className="bg-white shadow-sm">
+                        <div className="max-w-7xl mx-auto px-4 h-16 flex justify-between items-center">
+                            <h1 className="text-2xl font-bold text-purple-600">AI 수학 튜터</h1>
+                            <div className="flex items-center gap-4">
+                                <span className="text-gray-700">👋 안녕하세요, {userName}</span>
+                                <button onClick={handleLogout}>나가기</button>
+                            </div>
+                        </div>
+                    </nav>
+                    <div className="max-w-7xl mx-auto px-4 py-8">
+                        <h2 className="text-3xl font-bold mb-6">학습 대시보드</h2>
+                        <div className="grid md:grid-cols-3 gap-6 mb-8">
+                            <StatCard title="남은 학습" value={stats.incompletedSessions} />
+                            <StatCard title="완료한 학습" value={stats.completedSessions} />
+                            <StatCard title="평균 점수" value={stats.averageScore} />
+                        </div>
+                        <div className="bg-white rounded-xl p-6 card-shadow space-y-4">
+                            {categories.map(cat => (
+                                <div key={cat.id} className="flex justify-between items-center border p-4 rounded">
+                                    <div>
+                                        <h3 className="font-bold">{cat.title}</h3>
+                                        {cat.done && (
+                                            <p className="text-sm text-green-600">완료 · 점수 {cat.score}</p>
+                                        )}
+                                    </div>
+                                    <button
+                                        onClick={() => onStartSession(cat)}
+                                        className="bg-purple-600 text-white px-4 py-2 rounded"
+                                    >
+                                        {cat.done ? '다시 풀기' : '시작하기'}
+                                    </button>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                </div>
+            );
+        }
+
+        function StatCard({ title, value }) {
+            return (
+                <div className="bg-white rounded-xl p-6 card-shadow">
+                    <span className="text-gray-600">{title}</span>
+                    <p className="text-3xl font-bold text-purple-600">{value}</p>
+                </div>
+            );
+        }
+
+        function LearningSession({ userName, category, onBack }) {
+            const [questions, setQuestions] = useState([]);
+            const [loading, setLoading] = useState(true);
+            const [currentQuestion, setCurrentQuestion] = useState(0);
+            const [answers, setAnswers] = useState({});
+            const [feedback, setFeedback] = useState(null);
+            const [submitting, setSubmitting] = useState(false);
+            const [showResults, setShowResults] = useState(false);
+            const [sessionScore, setSessionScore] = useState(0);
+
+            useEffect(() => {
+                const raw = questionsOf(category.id);
+                setQuestions(formatQuestions(raw));
+                setLoading(false);
+            }, [category]);
+
+            const handleAnswer = (answer) => {
+                setAnswers({ ...answers, [currentQuestion]: answer });
+            };
+
+            const handleSubmitAnswer = () => {
+                setSubmitting(true);
+                const userAnswer = answers[currentQuestion];
+                const question = questions[currentQuestion];
+                const raw = questionsOf(category.id).find(q => q.id === question.id);
+                const result = gradeObjective(raw, userAnswer);
+                recordAnswer(category.id, question.id, result.isCorrect);
+                setFeedback({
+                    isCorrect: result.isCorrect,
+                    feedback: result.feedback,
+                    correction: result.isCorrect ? '' : result.correctText,
+                    explanation: result.explanation
+                });
+                setSubmitting(false);
+            };
+
+            const handleNextQuestion = () => {
+                setFeedback(null);
+                if (currentQuestion < questions.length - 1) {
+                    setCurrentQuestion(currentQuestion + 1);
+                } else {
+                    const totalScore = Math.round(
+                        (questions.filter((q, idx) => answers[idx] === q.correctAnswer).length / questions.length) * 100
+                    );
+                    setSessionScore(totalScore);
+                    setShowResults(true);
+                }
+            };
+
+            if (loading) {
+                return (
+                    <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+                        <div className="text-center">
+                            <div className="text-4xl mb-4">⏳</div>
+                            <p className="text-gray-600">문제를 불러오는 중...</p>
+                        </div>
+                    </div>
+                );
+            }
+
+            if (questions.length === 0) {
+                return (
+                    <div className="min-h-screen bg-gray-50">
+                        <nav className="bg-white shadow-sm">
+                            <div className="max-w-7xl mx-auto px-4 h-16 flex items-center">
+                                <h1 className="text-2xl font-bold text-purple-600">AI 수학 튜터</h1>
+                            </div>
+                        </nav>
+                        <div className="max-w-3xl mx-auto px-4 py-12">
+                            <div className="bg-white rounded-xl card-shadow p-8 text-center">
+                                <div className="text-6xl mb-4">📝</div>
+                                <h2 className="text-2xl font-bold text-gray-800 mb-4">아직 문제가 없습니다</h2>
+                                <button onClick={onBack} className="bg-purple-600 text-white py-3 px-6 rounded-lg">돌아가기</button>
+                            </div>
+                        </div>
+                    </div>
+                );
+            }
+
+            if (showResults) {
+                return (
+                    <div className="min-h-screen bg-gray-50">
+                        <nav className="bg-white shadow-sm">
+                            <div className="max-w-7xl mx-auto px-4 h-16 flex items-center">
+                                <h1 className="text-2xl font-bold text-purple-600">AI 수학 튜터</h1>
+                            </div>
+                        </nav>
+                        <div className="max-w-3xl mx-auto px-4 py-12">
+                            <div className="bg-white rounded-xl card-shadow p-8 text-center animate-fade-in">
+                                <div className="text-6xl mb-4">🎉</div>
+                                <h2 className="text-3xl font-bold text-gray-800 mb-2">학습 완료!</h2>
+                                <p className="text-gray-600 mb-4">{category.title} 학습을 마쳤습니다!</p>
+                                <p className="text-5xl font-bold text-purple-600 mb-8">점수: {sessionScore}%</p>
+                                <button
+                                    onClick={onBack}
+                                    className="w-full bg-purple-600 text-white py-3 px-4 rounded-lg font-medium hover:bg-purple-700 transition"
+                                >
+                                    학습 대시보드로 돌아가기
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                );
+            }
+
+            const question = questions[currentQuestion];
+
+            return (
+                <div className="min-h-screen bg-gray-50">
+                    <nav className="bg-white shadow-sm">
+                        <div className="max-w-7xl mx-auto px-4 h-16 flex justify-between items-center">
+                            <h1 className="text-2xl font-bold text-purple-600">AI 수학 튜터</h1>
+                            <div className="flex items-center gap-4">
+                                <span className="text-gray-700">👋 안녕하세요, {userName}</span>
+                                <button onClick={onBack} className="px-4 py-2 text-sm text-gray-700 hover:text-gray-900">← 돌아가기</button>
+                            </div>
+                        </div>
+                    </nav>
+                    <div className="max-w-3xl mx-auto px-4 py-8">
+                        <div className="mb-4 flex justify-between items-center">
+                            <p className="text-gray-600 font-medium">문제 {currentQuestion + 1}/{questions.length}</p>
+                            <span className="text-sm text-purple-600 font-medium">{category.title}</span>
+                        </div>
+                        <div className="bg-white rounded-xl card-shadow p-8 mb-6 animate-fade-in">
+                            <p className="text-xl text-gray-800 mb-6">
+                                <MathText text={question.question} />
+                            </p>
+                            <div className="space-y-2">
+                                {question.options.map((opt, i) => (
+                                    <button
+                                        key={i}
+                                        onClick={() => handleAnswer(opt)}
+                                        disabled={feedback !== null}
+                                        className={`w-full p-4 border rounded-lg text-left transition ${
+                                            answers[currentQuestion] === opt
+                                                ? 'border-purple-500 bg-purple-50'
+                                                : 'border-gray-200 hover:border-purple-300'
+                                        } ${feedback !== null ? 'cursor-not-allowed opacity-60' : ''}`}
+                                    >
+                                        <MathText text={opt} />
+                                    </button>
+                                ))}
+                            </div>
+                            {!feedback && answers[currentQuestion] && (
+                                <button
+                                    onClick={handleSubmitAnswer}
+                                    disabled={submitting}
+                                    className="mt-6 w-full bg-purple-600 text-white py-3 px-4 rounded-lg font-medium hover:bg-purple-700 transition disabled:opacity-50"
+                                >
+                                    {submitting ? '채점 중...' : '답 제출하기'}
+                                </button>
+                            )}
+                        </div>
+                        {feedback && (
+                            <div className="bg-white rounded-xl card-shadow p-6 animate-fade-in">
+                                <div className={`mb-4 p-4 rounded-lg ${feedback.isCorrect ? 'bg-green-50' : 'bg-red-50'}`}>
+                                    <p className={`font-semibold ${feedback.isCorrect ? 'text-green-700' : 'text-red-700'}`}>
+                                        <MathText text={feedback.feedback} />
+                                    </p>
+                                    {feedback.correction && (
+                                        <p className="text-gray-700 mt-2">
+                                            정답: <strong><MathText text={feedback.correction} /></strong>
+                                        </p>
+                                    )}
+                                </div>
+                                {feedback.explanation && (
+                                    <div className="mb-4 p-4 bg-blue-50 rounded-lg">
+                                        <p className="text-sm font-semibold text-blue-700 mb-1">💡 해설</p>
+                                        <p className="text-gray-700"><MathText text={feedback.explanation} /></p>
+                                    </div>
+                                )}
+                                <button
+                                    onClick={handleNextQuestion}
+                                    className="w-full bg-purple-600 text-white py-3 rounded-lg font-medium hover:bg-purple-700 transition"
+                                >
+                                    {currentQuestion < questions.length - 1 ? '다음 문제' : '결과 보기'}
+                                </button>
+                            </div>
+                        )}
+                    </div>
+                </div>
+            );
+        }
+
+        fetch('data/questions.json')
+            .then(res => {
+                if (!res.ok) throw new Error('questions.json 로드 실패');
+                return res.json();
+            })
+            .then(data => {
+                window.QUESTION_BANK = data;
+                ReactDOM.render(<App />, document.getElementById('root'));
+            })
+            .catch(err => {
+                console.error(err);
+                document.getElementById('root').textContent = '문제를 불러오지 못했습니다.';
+            });
+    </script>
+</body>
+</html>
