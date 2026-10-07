@@ -23,7 +23,8 @@
     <script type="text/babel">
         const { useState, useEffect } = React;
         const userName = '게스트';
-        const STORAGE_KEY = 'mathweb-progress';
+        const STORAGE_KEY = 'mathweb-quiz30';
+        const QUIZ_SIZE = 30;
 
         // GitHub Pages는 저장소 하위 경로에서 열리므로 절대 경로를 쓰지 않는다.
         function renderMathText(text) {
@@ -63,55 +64,35 @@
             localStorage.setItem(STORAGE_KEY, JSON.stringify(progress));
         }
 
-        function questionsOf(categoryId) {
-            return (window.QUESTION_BANK.questions || []).filter(q => q.category_id === categoryId);
-        }
-
-        // 단원 문제를 끝까지 풀어야 완료. 기록은 이 브라우저에만 남긴다.
-        function buildDashboard() {
-            const progress = loadProgress();
-            const categories = (window.QUESTION_BANK.categories || []).map(c => {
-                const total = questionsOf(c.id).length;
-                const answered = (progress[c.id] && progress[c.id].answered) || {};
-                const questionCount = Object.keys(answered).length;
-                const correctCount = Object.values(answered).filter(Boolean).length;
-                const done = total > 0 && questionCount >= total;
-                const score = done ? Math.round((correctCount / questionCount) * 100) : 0;
-                return {
-                    id: c.id,
-                    title: c.name || c.title || '',
-                    grade: c.grade || '',
-                    done,
-                    score,
-                    question_count: questionCount
-                };
+        // 화면에는 단원 6개가 아니라 문제 30개가 보여야 한다.
+        // 단원마다 5문제씩 뽑아 한 세트로 묶는다.
+        function pickQuiz() {
+            const bank = window.QUESTION_BANK || { categories: [], questions: [] };
+            const topicById = {};
+            (bank.categories || []).forEach(c => { topicById[c.id] = c.name || ''; });
+            const grouped = {};
+            (bank.questions || []).forEach(q => {
+                if (!grouped[q.category_id]) grouped[q.category_id] = [];
+                grouped[q.category_id].push(q);
             });
-            const completed = categories.filter(c => c.done);
-            const averageScore = completed.length
-                ? Math.round((completed.reduce((sum, c) => sum + c.score, 0) / completed.length) * 10) / 10
-                : 0;
-            return {
-                categories,
-                stats: {
-                    completedSessions: completed.length,
-                    incompletedSessions: categories.length - completed.length,
-                    averageScore
-                }
-            };
+            const picked = [];
+            (bank.categories || []).forEach(c => {
+                (grouped[c.id] || []).slice(0, 5).forEach(q => {
+                    picked.push(Object.assign({}, q, { topic: topicById[c.id] || '' }));
+                });
+            });
+            return picked.slice(0, QUIZ_SIZE);
         }
 
-        function resetCategory(categoryId) {
-            const progress = loadProgress();
-            progress[categoryId] = { answered: {} };
-            saveProgress(progress);
+        function resetQuiz() {
+            saveProgress({ answered: {} });
         }
 
-        function recordAnswer(categoryId, questionId, isCorrect) {
+        function recordAnswer(questionId, isCorrect) {
             const progress = loadProgress();
-            const slot = progress[categoryId] || { answered: {} };
-            slot.answered = slot.answered || {};
-            slot.answered[questionId] = isCorrect;
-            progress[categoryId] = slot;
+            const answered = progress.answered || {};
+            answered[questionId] = isCorrect;
+            progress.answered = answered;
             saveProgress(progress);
         }
 
@@ -138,22 +119,22 @@
                 const graded = gradeObjective(q, '');
                 return {
                     id: q.id,
-                    type: 'multiple-choice',
+                    topic: q.topic || '',
                     question: q.question_text || '',
                     options: q.choices || [],
                     correctAnswer: graded.correctText,
-                    explanation: q.explanation || ''
+                    explanation: q.explanation || '',
+                    raw: q
                 };
             });
         }
 
         function App() {
             const [view, setView] = useState('dashboard');
-            const [selectedCategory, setSelectedCategory] = useState(null);
+            const quiz = pickQuiz();
 
-            const handleStartSession = (category) => {
-                resetCategory(category.id);
-                setSelectedCategory(category);
+            const handleStart = () => {
+                resetQuiz();
                 setView('learning');
             };
 
@@ -162,13 +143,14 @@
                     {view === 'dashboard' && (
                         <StudentDashboard
                             userName={userName}
-                            onStartSession={handleStartSession}
+                            quiz={quiz}
+                            onStart={handleStart}
                         />
                     )}
                     {view === 'learning' && (
                         <LearningSession
                             userName={userName}
-                            category={selectedCategory}
+                            quiz={quiz}
                             onBack={() => setView('dashboard')}
                         />
                     )}
@@ -176,13 +158,9 @@
             );
         }
 
-        function StudentDashboard({ userName, onStartSession }) {
-            const [stats, setStats] = React.useState({
-                completedSessions: 0,
-                incompletedSessions: 0,
-                averageScore: 0
-            });
-            const [categories, setCategories] = React.useState([]);
+        function StudentDashboard({ userName, quiz, onStart }) {
+            const [answeredCount, setAnsweredCount] = React.useState(0);
+            const [correctCount, setCorrectCount] = React.useState(0);
 
             const handleLogout = () => {
                 localStorage.removeItem(STORAGE_KEY);
@@ -190,10 +168,15 @@
             };
 
             React.useEffect(() => {
-                const data = buildDashboard();
-                setStats(data.stats);
-                setCategories(data.categories);
-            }, []);
+                const answered = loadProgress().answered || {};
+                const ids = new Set(quiz.map(q => String(q.id)));
+                const keys = Object.keys(answered).filter(id => ids.has(String(id)));
+                setAnsweredCount(keys.length);
+                setCorrectCount(keys.filter(id => answered[id]).length);
+            }, [quiz]);
+
+            const remaining = Math.max(quiz.length - answeredCount, 0);
+            const finished = quiz.length > 0 && answeredCount >= quiz.length;
 
             return (
                 <div className="min-h-screen bg-gray-50">
@@ -207,27 +190,23 @@
                         </div>
                     </nav>
                     <div className="max-w-7xl mx-auto px-4 py-8">
-                        <h2 className="text-3xl font-bold mb-6">학습 대시보드</h2>
+                        <h2 className="text-3xl font-bold mb-6">문제 {quiz.length}개</h2>
                         <div className="grid md:grid-cols-3 gap-6 mb-8">
-                            <StatCard title="남은 학습" value={stats.incompletedSessions} />
-                            <StatCard title="완료한 학습" value={stats.completedSessions} />
-                            <StatCard title="평균 점수" value={stats.averageScore} />
+                            <StatCard title="전체 문제" value={quiz.length} />
+                            <StatCard title="남은 문제" value={remaining} />
+                            <StatCard title="맞힌 문제" value={correctCount} />
                         </div>
+                        <button
+                            onClick={onStart}
+                            className="mb-6 w-full bg-purple-600 text-white py-3 px-4 rounded-lg font-medium hover:bg-purple-700"
+                        >
+                            {finished ? `문제 ${quiz.length}개 다시 풀기` : `문제 ${quiz.length}개 풀기`}
+                        </button>
                         <div className="bg-white rounded-xl p-6 card-shadow space-y-4">
-                            {categories.map(cat => (
-                                <div key={cat.id} className="flex justify-between items-center border p-4 rounded">
-                                    <div>
-                                        <h3 className="font-bold">{cat.title}</h3>
-                                        {cat.done && (
-                                            <p className="text-sm text-green-600">완료 · 점수 {cat.score}</p>
-                                        )}
-                                    </div>
-                                    <button
-                                        onClick={() => onStartSession(cat)}
-                                        className="bg-purple-600 text-white px-4 py-2 rounded"
-                                    >
-                                        {cat.done ? '다시 풀기' : '시작하기'}
-                                    </button>
+                            {quiz.map((q, index) => (
+                                <div key={q.id} className="border p-4 rounded">
+                                    <p className="text-sm text-purple-600 font-medium mb-1">문제 {index + 1} · {q.topic}</p>
+                                    <p className="text-gray-800"><MathText text={q.question_text} /></p>
                                 </div>
                             ))}
                         </div>
@@ -245,21 +224,14 @@
             );
         }
 
-        function LearningSession({ userName, category, onBack }) {
-            const [questions, setQuestions] = useState([]);
-            const [loading, setLoading] = useState(true);
+        function LearningSession({ userName, quiz, onBack }) {
+            const [questions] = useState(() => formatQuestions(quiz));
             const [currentQuestion, setCurrentQuestion] = useState(0);
             const [answers, setAnswers] = useState({});
             const [feedback, setFeedback] = useState(null);
             const [submitting, setSubmitting] = useState(false);
             const [showResults, setShowResults] = useState(false);
             const [sessionScore, setSessionScore] = useState(0);
-
-            useEffect(() => {
-                const raw = questionsOf(category.id);
-                setQuestions(formatQuestions(raw));
-                setLoading(false);
-            }, [category]);
 
             const handleAnswer = (answer) => {
                 setAnswers({ ...answers, [currentQuestion]: answer });
@@ -269,9 +241,8 @@
                 setSubmitting(true);
                 const userAnswer = answers[currentQuestion];
                 const question = questions[currentQuestion];
-                const raw = questionsOf(category.id).find(q => q.id === question.id);
-                const result = gradeObjective(raw, userAnswer);
-                recordAnswer(category.id, question.id, result.isCorrect);
+                const result = gradeObjective(question.raw, userAnswer);
+                recordAnswer(question.id, result.isCorrect);
                 setFeedback({
                     isCorrect: result.isCorrect,
                     feedback: result.feedback,
@@ -293,17 +264,6 @@
                     setShowResults(true);
                 }
             };
-
-            if (loading) {
-                return (
-                    <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-                        <div className="text-center">
-                            <div className="text-4xl mb-4">⏳</div>
-                            <p className="text-gray-600">문제를 불러오는 중...</p>
-                        </div>
-                    </div>
-                );
-            }
 
             if (questions.length === 0) {
                 return (
@@ -336,7 +296,7 @@
                             <div className="bg-white rounded-xl card-shadow p-8 text-center animate-fade-in">
                                 <div className="text-6xl mb-4">🎉</div>
                                 <h2 className="text-3xl font-bold text-gray-800 mb-2">학습 완료!</h2>
-                                <p className="text-gray-600 mb-4">{category.title} 학습을 마쳤습니다!</p>
+                                <p className="text-gray-600 mb-4">문제 {questions.length}개를 모두 풀었습니다.</p>
                                 <p className="text-5xl font-bold text-purple-600 mb-8">점수: {sessionScore}%</p>
                                 <button
                                     onClick={onBack}
@@ -366,7 +326,7 @@
                     <div className="max-w-3xl mx-auto px-4 py-8">
                         <div className="mb-4 flex justify-between items-center">
                             <p className="text-gray-600 font-medium">문제 {currentQuestion + 1}/{questions.length}</p>
-                            <span className="text-sm text-purple-600 font-medium">{category.title}</span>
+                            <span className="text-sm text-purple-600 font-medium">{question.topic}</span>
                         </div>
                         <div className="bg-white rounded-xl card-shadow p-8 mb-6 animate-fade-in">
                             <p className="text-xl text-gray-800 mb-6">
