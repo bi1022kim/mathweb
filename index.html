@@ -23,7 +23,8 @@
     <script type="text/babel">
         const { useState, useEffect } = React;
         const userName = '게스트';
-        const STORAGE_KEY = 'mathweb-units30';
+        // 유형을 바꾼 뒤에는 이전 30카드 진행 기록이 다른 단원에 붙지 않게 키를 분리한다.
+        const STORAGE_KEY = 'mathweb-types30';
 
         function renderMathText(text) {
             if (text === null || text === undefined) return '';
@@ -61,25 +62,14 @@
             localStorage.setItem(STORAGE_KEY, JSON.stringify(progress));
         }
 
-        // 영어 대시보드와 같이 단원 카드가 여러 줄 보이게, 6단원을 2문제씩 묶어 30개로 나눈다.
+        // 같은 단원 이름에 번호만 붙이지 않고, 유형 하나당 카드 한 장으로 보여 준다.
         function buildUnits() {
             const bank = window.QUESTION_BANK || { categories: [], questions: [] };
-            const units = [];
-            let id = 1;
-            (bank.categories || []).forEach(cat => {
-                const questions = (bank.questions || []).filter(q => q.category_id === cat.id);
-                for (let i = 0; i < questions.length; i += 2) {
-                    const chunk = questions.slice(i, i + 2);
-                    if (!chunk.length) continue;
-                    units.push({
-                        id: id,
-                        title: cat.name + ' ' + (Math.floor(i / 2) + 1),
-                        questions: chunk
-                    });
-                    id += 1;
-                }
-            });
-            return units.slice(0, 30);
+            return (bank.categories || []).map(cat => ({
+                id: cat.id,
+                title: cat.name,
+                questions: (bank.questions || []).filter(q => q.category_id === cat.id)
+            })).filter(unit => unit.questions.length > 0);
         }
 
         function gradeObjective(question, studentAnswer) {

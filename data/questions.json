@@ -2,32 +2,152 @@
   "categories": [
     {
       "id": 1,
-      "name": "분수의 나눗셈",
+      "name": "분수의 덧셈",
       "grade": "초등 5학년"
     },
     {
       "id": 2,
-      "name": "약분과 통분",
+      "name": "분수의 뺄셈",
       "grade": "초등 5학년"
     },
     {
       "id": 3,
-      "name": "혼합 계산",
+      "name": "분수의 곱셈",
       "grade": "초등 5학년"
     },
     {
       "id": 4,
-      "name": "비와 비율",
+      "name": "분수의 나눗셈",
       "grade": "초등 6학년"
     },
     {
       "id": 5,
+      "name": "대분수를 가분수로",
+      "grade": "초등 5학년"
+    },
+    {
+      "id": 6,
+      "name": "가분수를 대분수로",
+      "grade": "초등 5학년"
+    },
+    {
+      "id": 7,
+      "name": "약분",
+      "grade": "초등 5학년"
+    },
+    {
+      "id": 8,
+      "name": "통분",
+      "grade": "초등 5학년"
+    },
+    {
+      "id": 9,
+      "name": "분수의 크기 비교",
+      "grade": "초등 5학년"
+    },
+    {
+      "id": 10,
+      "name": "소수의 덧셈",
+      "grade": "초등 4학년"
+    },
+    {
+      "id": 11,
+      "name": "소수의 뺄셈",
+      "grade": "초등 4학년"
+    },
+    {
+      "id": 12,
+      "name": "소수의 곱셈",
+      "grade": "초등 5학년"
+    },
+    {
+      "id": 13,
+      "name": "소수의 나눗셈",
+      "grade": "초등 6학년"
+    },
+    {
+      "id": 14,
+      "name": "소수를 분수로",
+      "grade": "초등 4학년"
+    },
+    {
+      "id": 15,
+      "name": "분수를 소수로",
+      "grade": "초등 4학년"
+    },
+    {
+      "id": 16,
+      "name": "약수 구하기",
+      "grade": "초등 5학년"
+    },
+    {
+      "id": 17,
+      "name": "배수 구하기",
+      "grade": "초등 5학년"
+    },
+    {
+      "id": 18,
+      "name": "최대공약수",
+      "grade": "초등 5학년"
+    },
+    {
+      "id": 19,
+      "name": "최소공배수",
+      "grade": "초등 5학년"
+    },
+    {
+      "id": 20,
+      "name": "자연수의 혼합 계산",
+      "grade": "초등 5학년"
+    },
+    {
+      "id": 21,
+      "name": "몫과 나머지",
+      "grade": "초등 3학년"
+    },
+    {
+      "id": 22,
+      "name": "비 나타내기",
+      "grade": "초등 6학년"
+    },
+    {
+      "id": 23,
+      "name": "비율과 백분율",
+      "grade": "초등 6학년"
+    },
+    {
+      "id": 24,
+      "name": "비례식",
+      "grade": "초등 6학년"
+    },
+    {
+      "id": 25,
+      "name": "직사각형의 넓이",
+      "grade": "초등 5학년"
+    },
+    {
+      "id": 26,
+      "name": "삼각형의 넓이",
+      "grade": "초등 5학년"
+    },
+    {
+      "id": 27,
+      "name": "평행사변형의 넓이",
+      "grade": "초등 5학년"
+    },
+    {
+      "id": 28,
+      "name": "원의 넓이",
+      "grade": "초등 6학년"
+    },
+    {
+      "id": 29,
       "name": "직육면체의 부피",
       "grade": "초등 6학년"
     },
     {
-      "id": 6,
-      "name": "소수의 나눗셈",
+      "id": 30,
+      "name": "평균 구하기",
       "grade": "초등 5학년"
     }
   ],
@@ -36,841 +156,841 @@
       "id": 1,
       "category_id": 1,
       "type": "objective",
-      "question_text": "$\\frac{2}{3} \\div 2$의 값을 구하세요.",
+      "question_text": "$\\frac{1}{2} + \\frac{1}{4}$를 기약분수로 구하세요.",
       "choices": [
-        "$\\frac{1}{3}$",
-        "$\\frac{4}{3}$",
+        "$\\frac{3}{4}$",
         "$\\frac{2}{6}$",
-        "$\\frac{3}{2}$"
+        "$\\frac{1}{8}$",
+        "$\\frac{2}{4}$"
       ],
       "answer": 0,
-      "explanation": "분수를 자연수로 나눌 때는 분자를 나누는 방법을 쓸 수 있어요. $2 \\div 2 = 1$이므로 분자가 2에서 1이 되어 $\\frac{1}{3}$입니다. (분모가 같으니 $\\frac{2}{6}$도 값은 같지만, 기약분수로 나타내면 $\\frac{1}{3}$이에요.)"
+      "explanation": "통분하면 $\\frac{2}{4} + \\frac{1}{4} = \\frac{3}{4}$입니다."
     },
     {
       "id": 2,
       "category_id": 1,
       "type": "objective",
-      "question_text": "$\\frac{4}{5} \\div 4$의 값을 구하세요.",
+      "question_text": "$\\frac{2}{3} + \\frac{1}{6}$를 기약분수로 구하세요.",
       "choices": [
-        "$\\frac{16}{5}$",
-        "$\\frac{1}{5}$",
-        "$\\frac{4}{20}$",
-        "$\\frac{5}{4}$"
+        "$\\frac{3}{9}$",
+        "$\\frac{5}{6}$",
+        "$\\frac{1}{2}$",
+        "$\\frac{3}{6}$"
       ],
       "answer": 1,
-      "explanation": "분자를 자연수로 나누면 $4 \\div 4 = 1$이므로 $\\frac{1}{5}$입니다. 분모를 곱하는 방법을 써도 $\\frac{4}{5 \\times 4} = \\frac{4}{20} = \\frac{1}{5}$로 같은 값이 나와요."
+      "explanation": "통분하면 $\\frac{4}{6} + \\frac{1}{6} = \\frac{5}{6}$입니다."
     },
     {
       "id": 3,
-      "category_id": 1,
+      "category_id": 2,
+      "type": "objective",
+      "question_text": "$\\frac{3}{4} - \\frac{1}{2}$를 기약분수로 구하세요.",
+      "choices": [
+        "$\\frac{2}{2}$",
+        "$\\frac{1}{2}$",
+        "$\\frac{1}{4}$",
+        "$\\frac{2}{4}$"
+      ],
+      "answer": 2,
+      "explanation": "통분하면 $\\frac{3}{4} - \\frac{2}{4} = \\frac{1}{4}$입니다."
+    },
+    {
+      "id": 4,
+      "category_id": 2,
+      "type": "objective",
+      "question_text": "$\\frac{5}{6} - \\frac{1}{3}$를 기약분수로 구하세요.",
+      "choices": [
+        "$\\frac{4}{6}$",
+        "$\\frac{4}{3}$",
+        "$\\frac{1}{3}$",
+        "$\\frac{1}{2}$"
+      ],
+      "answer": 3,
+      "explanation": "통분하면 $\\frac{5}{6} - \\frac{2}{6} = \\frac{3}{6} = \\frac{1}{2}$입니다."
+    },
+    {
+      "id": 5,
+      "category_id": 3,
+      "type": "objective",
+      "question_text": "$\\frac{2}{3} \\times \\frac{3}{4}$를 기약분수로 구하세요.",
+      "choices": [
+        "$\\frac{1}{2}$",
+        "$\\frac{6}{12}$",
+        "$\\frac{5}{7}$",
+        "$\\frac{8}{9}$"
+      ],
+      "answer": 0,
+      "explanation": "곱하면 $\\frac{6}{12}$이고, 약분하면 $\\frac{1}{2}$입니다."
+    },
+    {
+      "id": 6,
+      "category_id": 3,
+      "type": "objective",
+      "question_text": "$\\frac{1}{2} \\times \\frac{4}{5}$를 기약분수로 구하세요.",
+      "choices": [
+        "$\\frac{4}{10}$",
+        "$\\frac{2}{5}$",
+        "$\\frac{5}{7}$",
+        "$\\frac{4}{5}$"
+      ],
+      "answer": 1,
+      "explanation": "$\\frac{1 \\times 4}{2 \\times 5} = \\frac{4}{10} = \\frac{2}{5}$입니다."
+    },
+    {
+      "id": 7,
+      "category_id": 4,
       "type": "objective",
       "question_text": "$\\frac{3}{4} \\div \\frac{1}{8}$의 값을 구하세요.",
       "choices": [
         "$\\frac{3}{32}$",
-        "$\\frac{1}{6}$",
-        "6",
-        "$\\frac{8}{3}$"
+        "$\\frac{8}{3}$",
+        "$6$",
+        "$\\frac{1}{6}$"
       ],
       "answer": 2,
-      "explanation": "분수를 분수로 나눌 때는 나누는 수의 분모와 분자를 뒤집어 곱해요. $\\frac{3}{4} \\times \\frac{8}{1} = \\frac{24}{4} = 6$입니다."
-    },
-    {
-      "id": 4,
-      "category_id": 1,
-      "type": "objective",
-      "question_text": "페이가 있는 주스 $\\frac{5}{6}$L을 5컵에 똑같이 나누어 담으면 한 컵에 들어가는 주스는 몇 L인가요?",
-      "choices": [
-        "$\\frac{1}{6}$L",
-        "$\\frac{1}{5}$L",
-        "$\\frac{5}{30}$L",
-        "$\\frac{1}{3}$L"
-      ],
-      "answer": 0,
-      "explanation": "$\\frac{5}{6} \\div 5$를 계산하면 분자 $5 \\div 5 = 1$이므로 $\\frac{1}{6}$L입니다."
-    },
-    {
-      "id": 5,
-      "category_id": 1,
-      "type": "objective",
-      "question_text": "$\\frac{1}{2} \\div \\frac{3}{4}$의 값을 구하세요.",
-      "choices": [
-        "$\\frac{3}{8}$",
-        "$\\frac{2}{3}$",
-        "$\\frac{4}{3}$",
-        "$\\frac{1}{4}$"
-      ],
-      "answer": 1,
-      "explanation": "$\\frac{1}{2} \\times \\frac{4}{3} = \\frac{4}{6}$이고, 기약분수로 약분하면 $\\frac{2}{3}$입니다."
-    },
-    {
-      "id": 6,
-      "category_id": 2,
-      "type": "objective",
-      "question_text": "$\\frac{6}{8}$을 가장 간단한 분수(기약분수)로 나타내면?",
-      "choices": [
-        "$\\frac{3}{4}$",
-        "$\\frac{6}{8}$",
-        "$\\frac{2}{3}$",
-        "$\\frac{3}{8}$"
-      ],
-      "answer": 0,
-      "explanation": "분자와 분모를 같은 수로 나누는 것을 약분이라고 해요. $\\frac{6}{8}$은 분자·분모를 2로 나누어 $\\frac{3}{4}$이 됩니다. 3과 4는 더 이상 약분할 수 없으니 이것이 기약분수예요."
-    },
-    {
-      "id": 7,
-      "category_id": 2,
-      "type": "objective",
-      "question_text": "$\\frac{1}{2}$과 $\\frac{3}{8}$을 통분할 때, 분모의 공통분모로 가장 알맞은 것은?",
-      "choices": [
-        "4",
-        "8",
-        "16",
-        "2"
-      ],
-      "answer": 1,
-      "explanation": "통분은 분모를 같게 만드는 것이에요. 2와 8의 공배수 중 가장 작은 수(최소공배수)는 8입니다. 그래서 $\\frac{4}{8}$과 $\\frac{3}{8}$으로 통분할 수 있어요."
+      "explanation": "나누는 분수를 뒤집어 곱하면 $\\frac{3}{4} \\times 8 = 6$입니다."
     },
     {
       "id": 8,
-      "category_id": 2,
+      "category_id": 4,
       "type": "objective",
-      "question_text": "$\\frac{2}{3}$과 $\\frac{3}{4}$ 중 어느 것이 더 큰가요?",
+      "question_text": "$\\frac{2}{5} \\div \\frac{4}{5}$를 기약분수로 구하세요.",
       "choices": [
-        "$\\frac{2}{3}$",
-        "$\\frac{3}{4}$",
-        "같다",
-        "비교할 수 없다"
+        "$\\frac{8}{25}$",
+        "$\\frac{2}{4}$",
+        "$\\frac{5}{2}$",
+        "$\\frac{1}{2}$"
       ],
-      "answer": 1,
-      "explanation": "분모 3과 4의 최소공배수 12로 통분하면 $\\frac{8}{12}$과 $\\frac{9}{12}$이 됩니다. 분모가 같으면 분자가 큰 쪽이 크므로 $\\frac{9}{12} = \\frac{3}{4}$가 더 커요."
+      "answer": 3,
+      "explanation": "뒤집어 곱하면 $\\frac{2}{5} \\times \\frac{5}{4} = \\frac{2}{4} = \\frac{1}{2}$입니다."
     },
     {
       "id": 9,
-      "category_id": 2,
+      "category_id": 5,
       "type": "objective",
-      "question_text": "$\\frac{12}{18}$을 약분하여 기약분수로 나타내면?",
+      "question_text": "대분수 $2\\dfrac{1}{3}$을 가분수로 나타내세요.",
       "choices": [
-        "$\\frac{2}{3}$",
-        "$\\frac{6}{9}$",
-        "$\\frac{4}{6}$",
-        "$\\frac{3}{4}$"
+        "$\\frac{7}{3}$",
+        "$\\frac{3}{3}$",
+        "$\\frac{6}{3}$",
+        "$\\frac{5}{3}$"
       ],
       "answer": 0,
-      "explanation": "분자와 분모를 6으로 나누면 $\\frac{2}{3}$이 됩니다. ($\\frac{6}{9}$, $\\frac{4}{6}$도 값은 같지만 아직 기약분수가 아니에요.)"
+      "explanation": "자연수 2는 $\\frac{6}{3}$이므로 $\\frac{6}{3} + \\frac{1}{3} = \\frac{7}{3}$입니다."
     },
     {
       "id": 10,
-      "category_id": 2,
+      "category_id": 5,
       "type": "objective",
-      "question_text": "$\\frac{1}{4}$ + $\\frac{2}{4}$의 값을 구하세요.",
+      "question_text": "대분수 $3\\dfrac{2}{5}$를 가분수로 나타내세요.",
       "choices": [
-        "$\\frac{3}{8}$",
-        "$\\frac{3}{4}$",
-        "$\\frac{2}{16}$",
-        "$\\frac{1}{2}$"
+        "$\\frac{6}{5}$",
+        "$\\frac{17}{5}$",
+        "$\\frac{15}{5}$",
+        "$\\frac{11}{5}$"
       ],
       "answer": 1,
-      "explanation": "분모가 같은 분수의 덧셈은 분자끼리 더해요. $1 + 2 = 3$이므로 $\\frac{3}{4}$입니다."
+      "explanation": "자연수 3은 $\\frac{15}{5}$이므로 $\\frac{15}{5} + \\frac{2}{5} = \\frac{17}{5}$입니다."
     },
     {
       "id": 11,
-      "category_id": 3,
+      "category_id": 6,
       "type": "objective",
-      "question_text": "$2 + 3 \\times 4$의 값을 구하세요.",
+      "question_text": "가분수 $\\frac{7}{3}$을 대분수로 나타내세요.",
       "choices": [
-        "20",
-        "14",
-        "24",
-        "10"
+        "$3\\dfrac{1}{3}$",
+        "$1\\dfrac{1}{3}$",
+        "$2\\dfrac{1}{3}$",
+        "$2\\dfrac{2}{3}$"
       ],
-      "answer": 1,
-      "explanation": "혼합 계산에서는 곱셈과 나눗셈을 덧셈과 뺄셈보다 먼저 해요. $3 \\times 4 = 12$를 먼저 계산하고 $2 + 12 = 14$입니다."
+      "answer": 2,
+      "explanation": "$7 \\div 3 = 2$이고 나머지가 1이므로 $2\\dfrac{1}{3}$입니다."
     },
     {
       "id": 12,
-      "category_id": 3,
+      "category_id": 6,
       "type": "objective",
-      "question_text": "$(2 + 3) \\times 4$의 값을 구하세요.",
+      "question_text": "가분수 $\\frac{11}{4}$를 대분수로 나타내세요.",
       "choices": [
-        "14",
-        "20",
-        "24",
-        "10"
+        "$3\\dfrac{1}{4}$",
+        "$2\\dfrac{1}{4}$",
+        "$1\\dfrac{3}{4}$",
+        "$2\\dfrac{3}{4}$"
       ],
-      "answer": 1,
-      "explanation": "괄호가 있으면 괄호 안을 먼저 계산해요. $2 + 3 = 5$를 먼저 계산하고 $5 \\times 4 = 20$입니다. 괄호가 계산 순서를 바꾸는 것을 볼 수 있어요."
+      "answer": 3,
+      "explanation": "$11 \\div 4 = 2$이고 나머지가 3이므로 $2\\dfrac{3}{4}$입니다."
     },
     {
       "id": 13,
-      "category_id": 3,
+      "category_id": 7,
       "type": "objective",
-      "question_text": "$20 - 6 \\div 2$의 값을 구하세요.",
+      "question_text": "$\\frac{6}{8}$을 기약분수로 약분하세요.",
       "choices": [
-        "7",
-        "17",
-        "10",
-        "14"
+        "$\\frac{3}{4}$",
+        "$\\frac{2}{4}$",
+        "$\\frac{3}{8}$",
+        "$\\frac{6}{4}$"
       ],
-      "answer": 1,
-      "explanation": "나눗셈을 먼저 계산해요. $6 \\div 2 = 3$이고, $20 - 3 = 17$입니다."
+      "answer": 0,
+      "explanation": "분자와 분모를 2로 나누면 $\\frac{3}{4}$입니다."
     },
     {
       "id": 14,
-      "category_id": 3,
+      "category_id": 7,
       "type": "objective",
-      "question_text": "$12 \\div 3 + 2 \\times 5$의 값을 구하세요.",
+      "question_text": "$\\frac{12}{18}$을 기약분수로 약분하세요.",
       "choices": [
-        "30",
-        "14",
-        "20",
-        "12"
+        "$\\frac{6}{9}$",
+        "$\\frac{2}{3}$",
+        "$\\frac{4}{6}$",
+        "$\\frac{3}{4}$"
       ],
       "answer": 1,
-      "explanation": "곱셈과 나눗셈을 먼저 계산해요. $12 \\div 3 = 4$, $2 \\times 5 = 10$이고, $4 + 10 = 14$입니다."
+      "explanation": "분자와 분모를 6으로 나누면 $\\frac{2}{3}$입니다."
     },
     {
       "id": 15,
-      "category_id": 3,
+      "category_id": 8,
       "type": "objective",
-      "question_text": "$\\frac{1}{2} + \\frac{1}{3}$의 값을 구하세요.",
+      "question_text": "$\\frac{1}{2}$과 $\\frac{1}{3}$을 분모가 6이 되도록 통분하세요.",
       "choices": [
-        "$\\frac{2}{5}$",
-        "$\\frac{5}{6}$",
-        "$\\frac{1}{6}$",
-        "$\\frac{1}{5}$"
+        "$\\frac{1}{6}$과 $\\frac{1}{6}$",
+        "$\\frac{2}{6}$과 $\\frac{3}{6}$",
+        "$\\frac{3}{6}$과 $\\frac{2}{6}$",
+        "$\\frac{6}{2}$와 $\\frac{6}{3}$"
       ],
-      "answer": 1,
-      "explanation": "분모가 다른 분수의 덧셈은 통분을 먼저 해요. 분모 2와 3의 최소공배수는 6이므로 $\\frac{3}{6} + \\frac{2}{6} = \\frac{5}{6}$입니다."
+      "answer": 2,
+      "explanation": "$\\frac{1}{2} = \\frac{3}{6}$, $\\frac{1}{3} = \\frac{2}{6}$입니다."
     },
     {
       "id": 16,
-      "category_id": 4,
+      "category_id": 8,
       "type": "objective",
-      "question_text": "3 : 4와 같은 비를 나타내는 것은?",
+      "question_text": "$\\frac{1}{4}$과 $\\frac{1}{6}$을 분모가 12가 되도록 통분하세요.",
       "choices": [
-        "6 : 8",
-        "6 : 9",
-        "4 : 3",
-        "3 : 8"
+        "$\\frac{4}{12}$와 $\\frac{6}{12}$",
+        "$\\frac{2}{12}$와 $\\frac{3}{12}$",
+        "$\\frac{1}{12}$과 $\\frac{1}{12}$",
+        "$\\frac{3}{12}$과 $\\frac{2}{12}$"
       ],
-      "answer": 0,
-      "explanation": "비를 나타내는 두 수에 같은 수(0이 아닌)를 곱하거나 나누어도 비의 값은 같아요. $3 \\times 2 = 6$, $4 \\times 2 = 8$이므로 6 : 8이 3 : 4와 같은 비입니다."
+      "answer": 3,
+      "explanation": "$\\frac{1}{4} = \\frac{3}{12}$, $\\frac{1}{6} = \\frac{2}{12}$입니다."
     },
     {
       "id": 17,
-      "category_id": 4,
+      "category_id": 9,
       "type": "objective",
-      "question_text": "비 3 : 5의 비율을 분수로 나타내면?",
+      "question_text": "$\\frac{3}{4}$와 $\\frac{2}{3}$ 중 더 큰 수를 고르세요.",
       "choices": [
-        "$\\frac{5}{3}$",
-        "$\\frac{3}{5}$",
-        "$\\frac{3}{8}$",
-        "$\\frac{5}{8}$"
-      ],
-      "answer": 1,
-      "explanation": "비율은 앞의 수를 뒤의 수로 나눈 값이에요. $3 \\div 5 = \\frac{3}{5}$입니다."
-    },
-    {
-      "id": 18,
-      "category_id": 4,
-      "type": "objective",
-      "question_text": "밀가루 2컵과 우유 3컵으로 반죽을 만들 때, 밀가루와 우유의 양을 가장 간단한 비로 나타내면?",
-      "choices": [
-        "2 : 3",
-        "3 : 2",
-        "2 : 5",
-        "5 : 3"
-      ],
-      "answer": 0,
-      "explanation": "밀가루가 앞, 우유가 뒤이므로 2 : 3입니다. 2와 3의 최대공약수가 1이라 더 이상 간단하게 줄일 수 없어요."
-    },
-    {
-      "id": 19,
-      "category_id": 4,
-      "type": "objective",
-      "question_text": "12 : 18을 가장 간단한 정수의 비로 나타내면?",
-      "choices": [
-        "2 : 3",
-        "6 : 9",
-        "4 : 6",
-        "1 : 2"
-      ],
-      "answer": 0,
-      "explanation": "12와 18의 최대공약수는 6이에요. 두 수를 6으로 나누면 2 : 3이 됩니다."
-    },
-    {
-      "id": 20,
-      "category_id": 4,
-      "type": "objective",
-      "question_text": "5 : 8에서 뒤의 수에 비해 앞의 수가 차지하는 비율(백분율)은?",
-      "choices": [
-        "62.5%",
-        "160%",
-        "40%",
-        "80%"
-      ],
-      "answer": 0,
-      "explanation": "비율은 $5 \\div 8 = 0.625$이고, 백분율로 나타내면 62.5%입니다."
-    },
-    {
-      "id": 21,
-      "category_id": 5,
-      "type": "objective",
-      "question_text": "가로 4cm, 세로 3cm, 높이 2cm인 직육면체의 부피는?",
-      "choices": [
-        "9 $cm^3$",
-        "24 $cm^3$",
-        "26 $cm^3$",
-        "12 $cm^3$"
-      ],
-      "answer": 1,
-      "explanation": "직육면체의 부피 = 가로 × 세로 × 높이. $4 \\times 3 \\times 2 = 24$이므로 24$cm^3$입니다."
-    },
-    {
-      "id": 22,
-      "category_id": 5,
-      "type": "objective",
-      "question_text": "한 변이 3cm인 정육면체의 부피는?",
-      "choices": [
-        "9 $cm^3$",
-        "27 $cm^3$",
-        "12 $cm^3$",
-        "6 $cm^3$"
-      ],
-      "answer": 1,
-      "explanation": "정육면체의 부피 = 한 변 × 한 변 × 한 변. $3 \\times 3 \\times 3 = 27$이므로 27$cm^3$입니다."
-    },
-    {
-      "id": 23,
-      "category_id": 5,
-      "type": "objective",
-      "question_text": "부피가 60 $cm^3$인 직육면체의 가로가 5cm, 세로가 4cm라면 높이는?",
-      "choices": [
-        "3cm",
-        "4cm",
-        "5cm",
-        "12cm"
-      ],
-      "answer": 0,
-      "explanation": "부피 = 가로 × 세로 × 높이이므로 높이 = 부피 ÷ (가로 × 세로). $60 \\div (5 \\times 4) = 60 \\div 20 = 3$cm입니다."
-    },
-    {
-      "id": 24,
-      "category_id": 5,
-      "type": "objective",
-      "question_text": "가로 10cm, 세로 2cm, 높이 5cm인 직육면체의 부피는?",
-      "choices": [
-        "17 $cm^3$",
-        "100 $cm^3$",
-        "50 $cm^3$",
-        "20 $cm^3$"
-      ],
-      "answer": 1,
-      "explanation": "$10 \\times 2 \\times 5 = 100$이므로 100$cm^3$입니다."
-    },
-    {
-      "id": 25,
-      "category_id": 5,
-      "type": "objective",
-      "question_text": "부피가 8 $cm^3$인 정육면체의 한 변의 길이는?",
-      "choices": [
-        "2cm",
-        "4cm",
-        "3cm",
-        "8cm"
-      ],
-      "answer": 0,
-      "explanation": "정육면체의 부피 = 한 변³. $2 \\times 2 \\times 2 = 8$이므로 한 변은 2cm입니다."
-    },
-    {
-      "id": 26,
-      "category_id": 6,
-      "type": "objective",
-      "question_text": "$4.8 \\div 2$의 값을 구하세요.",
-      "choices": [
-        "2.4",
-        "24",
-        "0.24",
-        "2.04"
-      ],
-      "answer": 0,
-      "explanation": "$48 \\div 2 = 24$이고, 소수점 위치를 그대로 내려 $2.4$가 됩니다. (자연수로 나눌 때 소수점의 자리가 유지돼요.)"
-    },
-    {
-      "id": 27,
-      "category_id": 6,
-      "type": "objective",
-      "question_text": "$6.3 \\div 3$의 값을 구하세요.",
-      "choices": [
-        "2.1",
-        "21",
-        "0.21",
-        "2.3"
-      ],
-      "answer": 0,
-      "explanation": "$63 \\div 3 = 21$이고, 소수점을 그대로 내려 2.1입니다."
-    },
-    {
-      "id": 28,
-      "category_id": 6,
-      "type": "objective",
-      "question_text": "$5.6 \\div 0.7$의 값을 구하세요.",
-      "choices": [
-        "0.8",
-        "8",
-        "0.08",
-        "80"
-      ],
-      "answer": 1,
-      "explanation": "소수로 나눌 때는 나누는 수와 나누어지는 수의 소수점을 같은 자리만큼 옮겨요. 두 수에 10을 곱하면 $56 \\div 7 = 8$입니다."
-    },
-    {
-      "id": 29,
-      "category_id": 6,
-      "type": "objective",
-      "question_text": "$3.5 \\div 0.5$의 값을 구하세요.",
-      "choices": [
-        "7",
-        "0.7",
-        "70",
-        "1.75"
-      ],
-      "answer": 0,
-      "explanation": "두 수에 10을 곱해 $35 \\div 5 = 7$로 계산해요. ($0.5 \\times 7 = 3.5$로 검산할 수 있어요.)"
-    },
-    {
-      "id": 30,
-      "category_id": 6,
-      "type": "objective",
-      "question_text": "4.2m인 리본을 0.6m씩 자르면 몇 개를 만들 수 있나요?",
-      "choices": [
-        "6개",
-        "7개",
-        "8개",
-        "0.7개"
-      ],
-      "answer": 1,
-      "explanation": "$4.2 \\div 0.6$을 계산하면 두 수에 10을 곱해 $42 \\div 6 = 7$이므로 7개입니다."
-    },
-    {
-      "id": 31,
-      "category_id": 1,
-      "type": "objective",
-      "question_text": "$\\frac{5}{6} \\div \\frac{1}{3}$의 값을 기약분수로 구하세요.",
-      "choices": [
-        "$\\frac{5}{18}$",
-        "$\\frac{5}{2}$",
-        "$\\frac{2}{5}$",
-        "$\\frac{1}{2}$"
-      ],
-      "answer": 1,
-      "explanation": "나누는 분수의 분자와 분모를 바꾸어 곱해요. $\\frac{5}{6} \\times \\frac{3}{1} = \\frac{15}{6} = \\frac{5}{2}$입니다."
-    },
-    {
-      "id": 32,
-      "category_id": 1,
-      "type": "objective",
-      "question_text": "$\\frac{7}{8} \\div 7$의 값을 기약분수로 구하세요.",
-      "choices": [
-        "$\\frac{1}{8}$",
-        "$\\frac{49}{8}$",
-        "$\\frac{7}{56}$",
-        "$\\frac{8}{7}$"
-      ],
-      "answer": 0,
-      "explanation": "분자를 자연수로 나누면 $7 \\div 7 = 1$이므로 $\\frac{1}{8}$입니다. $\\frac{7}{56}$도 값은 같지만 기약분수가 아니에요."
-    },
-    {
-      "id": 33,
-      "category_id": 1,
-      "type": "objective",
-      "question_text": "$\\frac{2}{5} \\div \\frac{4}{5}$의 값을 기약분수로 구하세요.",
-      "choices": [
-        "$\\frac{8}{25}$",
-        "$\\frac{1}{2}$",
-        "$\\frac{2}{4}$",
-        "$\\frac{5}{2}$"
-      ],
-      "answer": 1,
-      "explanation": "$\\frac{2}{5} \\times \\frac{5}{4} = \\frac{10}{20} = \\frac{1}{2}$입니다."
-    },
-    {
-      "id": 34,
-      "category_id": 1,
-      "type": "objective",
-      "question_text": "리본 $\\frac{3}{4}$m를 $\\frac{1}{8}$m씩 자르면 몇 도막이 되나요?",
-      "choices": [
-        "$\\frac{3}{32}$도막",
-        "6도막",
-        "2도막",
-        "$\\frac{8}{3}$도막"
-      ],
-      "answer": 1,
-      "explanation": "$\\frac{3}{4} \\div \\frac{1}{8} = \\frac{3}{4} \\times \\frac{8}{1} = 6$이므로 6도막입니다."
-    },
-    {
-      "id": 35,
-      "category_id": 1,
-      "type": "objective",
-      "question_text": "$\\frac{9}{10} \\div 3$의 값을 기약분수로 구하세요.",
-      "choices": [
-        "$\\frac{3}{10}$",
-        "$\\frac{27}{10}$",
-        "$\\frac{9}{30}$",
-        "$\\frac{10}{3}$"
-      ],
-      "answer": 0,
-      "explanation": "분자 $9 \\div 3 = 3$이므로 $\\frac{3}{10}$입니다."
-    },
-    {
-      "id": 36,
-      "category_id": 2,
-      "type": "objective",
-      "question_text": "$\\frac{15}{25}$를 기약분수로 나타내면?",
-      "choices": [
-        "$\\frac{3}{5}$",
-        "$\\frac{5}{5}$",
-        "$\\frac{15}{25}$",
-        "$\\frac{3}{10}$"
-      ],
-      "answer": 0,
-      "explanation": "분자와 분모를 5로 나누면 $\\frac{3}{5}$입니다. 3과 5는 더 약분할 수 없어요."
-    },
-    {
-      "id": 37,
-      "category_id": 2,
-      "type": "objective",
-      "question_text": "$\\frac{2}{5}$와 $\\frac{1}{3}$을 통분할 때, 가장 작은 공통분모는?",
-      "choices": [
-        "8",
-        "15",
-        "30",
-        "5"
-      ],
-      "answer": 1,
-      "explanation": "5와 3의 최소공배수는 15입니다. $\\frac{6}{15}$과 $\\frac{5}{15}$로 통분해요."
-    },
-    {
-      "id": 38,
-      "category_id": 2,
-      "type": "objective",
-      "question_text": "$\\frac{5}{6}$과 $\\frac{7}{9}$ 중 어느 것이 더 큰가요?",
-      "choices": [
-        "$\\frac{5}{6}$",
-        "$\\frac{7}{9}$",
+        "$\\frac{3}{4}$",
+        "$\\frac{2}{3}$",
         "같다",
         "비교할 수 없다"
       ],
       "answer": 0,
-      "explanation": "분모 6과 9의 최소공배수 18로 통분하면 $\\frac{15}{18}$과 $\\frac{14}{18}$입니다. 분자가 더 큰 $\\frac{5}{6}$이 커요."
+      "explanation": "분모를 12로 통분하면 $\\frac{9}{12} > \\frac{8}{12}$이므로 $\\frac{3}{4}$가 더 큽니다."
+    },
+    {
+      "id": 18,
+      "category_id": 9,
+      "type": "objective",
+      "question_text": "$\\frac{5}{6}$와 $\\frac{7}{8}$ 중 더 큰 수를 고르세요.",
+      "choices": [
+        "$\\frac{5}{6}$",
+        "$\\frac{7}{8}$",
+        "같다",
+        "비교할 수 없다"
+      ],
+      "answer": 1,
+      "explanation": "분모를 24로 통분하면 $\\frac{21}{24} > \\frac{20}{24}$이므로 $\\frac{7}{8}$이 더 큽니다."
+    },
+    {
+      "id": 19,
+      "category_id": 10,
+      "type": "objective",
+      "question_text": "$1.25 + 0.4$의 값을 구하세요.",
+      "choices": [
+        "$1.29$",
+        "$5.25$",
+        "$1.65$",
+        "$0.165$"
+      ],
+      "answer": 2,
+      "explanation": "소수점을 맞추면 $1.25 + 0.40 = 1.65$입니다."
+    },
+    {
+      "id": 20,
+      "category_id": 10,
+      "type": "objective",
+      "question_text": "$3.7 + 2.06$의 값을 구하세요.",
+      "choices": [
+        "$5.13$",
+        "$3.96$",
+        "$5.706$",
+        "$5.76$"
+      ],
+      "answer": 3,
+      "explanation": "소수점을 맞추면 $3.70 + 2.06 = 5.76$입니다."
+    },
+    {
+      "id": 21,
+      "category_id": 11,
+      "type": "objective",
+      "question_text": "$2.5 - 0.75$의 값을 구하세요.",
+      "choices": [
+        "$1.75$",
+        "$2.25$",
+        "$1.85$",
+        "$1.25$"
+      ],
+      "answer": 0,
+      "explanation": "소수점을 맞추면 $2.50 - 0.75 = 1.75$입니다."
+    },
+    {
+      "id": 22,
+      "category_id": 11,
+      "type": "objective",
+      "question_text": "$4.2 - 1.08$의 값을 구하세요.",
+      "choices": [
+        "$3.28$",
+        "$3.12$",
+        "$4.12$",
+        "$3.02$"
+      ],
+      "answer": 1,
+      "explanation": "소수점을 맞추면 $4.20 - 1.08 = 3.12$입니다."
+    },
+    {
+      "id": 23,
+      "category_id": 12,
+      "type": "objective",
+      "question_text": "$0.3 \\times 0.4$의 값을 구하세요.",
+      "choices": [
+        "$1.2$",
+        "$0.7$",
+        "$0.12$",
+        "$0.012$"
+      ],
+      "answer": 2,
+      "explanation": "$3 \\times 4 = 12$이고 소수점이 둘 다 한 자리이므로 $0.12$입니다."
+    },
+    {
+      "id": 24,
+      "category_id": 12,
+      "type": "objective",
+      "question_text": "$1.2 \\times 0.5$의 값을 구하세요.",
+      "choices": [
+        "$6$",
+        "$0.06$",
+        "$1.7$",
+        "$0.6$"
+      ],
+      "answer": 3,
+      "explanation": "$12 \\times 5 = 60$이고 소수점 아래 자리가 한 자리씩이라 $0.60 = 0.6$입니다."
+    },
+    {
+      "id": 25,
+      "category_id": 13,
+      "type": "objective",
+      "question_text": "$1.2 \\div 0.3$의 값을 구하세요.",
+      "choices": [
+        "$4$",
+        "$0.4$",
+        "$40$",
+        "$0.36$"
+      ],
+      "answer": 0,
+      "explanation": "나누는 수와 나누어지는 수에 10을 곱하면 $12 \\div 3 = 4$입니다."
+    },
+    {
+      "id": 26,
+      "category_id": 13,
+      "type": "objective",
+      "question_text": "$4.5 \\div 0.5$의 값을 구하세요.",
+      "choices": [
+        "$0.9$",
+        "$9$",
+        "$90$",
+        "$2.25$"
+      ],
+      "answer": 1,
+      "explanation": "10을 곱하면 $45 \\div 5 = 9$입니다."
+    },
+    {
+      "id": 27,
+      "category_id": 14,
+      "type": "objective",
+      "question_text": "소수 $0.25$를 기약분수로 나타내세요.",
+      "choices": [
+        "$\\frac{1}{25}$",
+        "$\\frac{25}{10}$",
+        "$\\frac{1}{4}$",
+        "$\\frac{2}{5}$"
+      ],
+      "answer": 2,
+      "explanation": "$0.25 = \\frac{25}{100} = \\frac{1}{4}$입니다."
+    },
+    {
+      "id": 28,
+      "category_id": 14,
+      "type": "objective",
+      "question_text": "소수 $0.6$을 기약분수로 나타내세요.",
+      "choices": [
+        "$\\frac{6}{10}$",
+        "$\\frac{1}{6}$",
+        "$\\frac{6}{100}$",
+        "$\\frac{3}{5}$"
+      ],
+      "answer": 3,
+      "explanation": "$0.6 = \\frac{6}{10} = \\frac{3}{5}$입니다."
+    },
+    {
+      "id": 29,
+      "category_id": 15,
+      "type": "objective",
+      "question_text": "분수 $\\frac{1}{4}$를 소수로 나타내세요.",
+      "choices": [
+        "$0.25$",
+        "$0.4$",
+        "$1.4$",
+        "$0.14$"
+      ],
+      "answer": 0,
+      "explanation": "$\\frac{1}{4} = \\frac{25}{100} = 0.25$입니다."
+    },
+    {
+      "id": 30,
+      "category_id": 15,
+      "type": "objective",
+      "question_text": "분수 $\\frac{3}{5}$를 소수로 나타내세요.",
+      "choices": [
+        "$0.35$",
+        "$0.6$",
+        "$0.3$",
+        "$3.5$"
+      ],
+      "answer": 1,
+      "explanation": "$\\frac{3}{5} = \\frac{6}{10} = 0.6$입니다."
+    },
+    {
+      "id": 31,
+      "category_id": 16,
+      "type": "objective",
+      "question_text": "$12$의 약수는 모두 몇 개인가요?",
+      "choices": [
+        "$4$개",
+        "$5$개",
+        "$6$개",
+        "$3$개"
+      ],
+      "answer": 2,
+      "explanation": "$12$의 약수는 $1, 2, 3, 4, 6, 12$로 6개입니다."
+    },
+    {
+      "id": 32,
+      "category_id": 16,
+      "type": "objective",
+      "question_text": "다음 중 $18$의 약수가 아닌 수를 고르세요.",
+      "choices": [
+        "$1$",
+        "$6$",
+        "$9$",
+        "$8$"
+      ],
+      "answer": 3,
+      "explanation": "$18$의 약수는 $1, 2, 3, 6, 9, 18$입니다. $8$은 약수가 아닙니다."
+    },
+    {
+      "id": 33,
+      "category_id": 17,
+      "type": "objective",
+      "question_text": "$20$보다 작은 $4$의 배수 중 가장 큰 수를 구하세요.",
+      "choices": [
+        "$16$",
+        "$20$",
+        "$12$",
+        "$18$"
+      ],
+      "answer": 0,
+      "explanation": "$4$의 배수는 $4, 8, 12, 16, 20, \\ldots$이므로 $20$보다 작은 수 중 가장 큰 수는 $16$입니다."
+    },
+    {
+      "id": 34,
+      "category_id": 17,
+      "type": "objective",
+      "question_text": "$6$과 $9$의 공배수 중 가장 작은 수를 구하세요.",
+      "choices": [
+        "$3$",
+        "$18$",
+        "$36$",
+        "$54$"
+      ],
+      "answer": 1,
+      "explanation": "$6$과 $9$의 최소공배수는 $18$입니다."
+    },
+    {
+      "id": 35,
+      "category_id": 18,
+      "type": "objective",
+      "question_text": "$12$와 $18$의 최대공약수를 구하세요.",
+      "choices": [
+        "$3$",
+        "$9$",
+        "$6$",
+        "$36$"
+      ],
+      "answer": 2,
+      "explanation": "공통 약수는 $1, 2, 3, 6$이고 그중 가장 큰 수는 $6$입니다."
+    },
+    {
+      "id": 36,
+      "category_id": 18,
+      "type": "objective",
+      "question_text": "$24$와 $36$의 최대공약수를 구하세요.",
+      "choices": [
+        "$6$",
+        "$4$",
+        "$72$",
+        "$12$"
+      ],
+      "answer": 3,
+      "explanation": "공통 약수 중 가장 큰 수는 $12$입니다."
+    },
+    {
+      "id": 37,
+      "category_id": 19,
+      "type": "objective",
+      "question_text": "$4$와 $6$의 최소공배수를 구하세요.",
+      "choices": [
+        "$12$",
+        "$2$",
+        "$24$",
+        "$8$"
+      ],
+      "answer": 0,
+      "explanation": "$4$와 $6$이 동시에 나누어떨어지는 수 중 가장 작은 수는 $12$입니다."
+    },
+    {
+      "id": 38,
+      "category_id": 19,
+      "type": "objective",
+      "question_text": "$8$과 $12$의 최소공배수를 구하세요.",
+      "choices": [
+        "$4$",
+        "$24$",
+        "$48$",
+        "$96$"
+      ],
+      "answer": 1,
+      "explanation": "$8$과 $12$의 최소공배수는 $24$입니다."
     },
     {
       "id": 39,
-      "category_id": 2,
+      "category_id": 20,
       "type": "objective",
-      "question_text": "$\\frac{8}{12} + \\frac{1}{12}$를 계산하여 기약분수로 나타내면?",
+      "question_text": "$3 + 4 \\times 2$의 값을 구하세요.",
       "choices": [
-        "$\\frac{9}{24}$",
-        "$\\frac{3}{4}$",
-        "$\\frac{9}{12}$",
-        "$\\frac{7}{12}$"
+        "$14$",
+        "$10$",
+        "$11$",
+        "$9$"
       ],
-      "answer": 1,
-      "explanation": "분모가 같으면 분자만 더해요. $8 + 1 = 9$이므로 $\\frac{9}{12}$이고, 3으로 약분하면 $\\frac{3}{4}$입니다."
+      "answer": 2,
+      "explanation": "곱셈을 먼저 하면 $4 \\times 2 = 8$이고, $3 + 8 = 11$입니다."
     },
     {
       "id": 40,
-      "category_id": 2,
+      "category_id": 20,
       "type": "objective",
-      "question_text": "$\\frac{4}{6}$을 기약분수로 나타내면?",
+      "question_text": "$(20 - 8) \\div 4$의 값을 구하세요.",
       "choices": [
-        "$\\frac{2}{3}$",
-        "$\\frac{4}{6}$",
-        "$\\frac{1}{2}$",
-        "$\\frac{3}{4}$"
+        "$12$",
+        "$5$",
+        "$4$",
+        "$3$"
       ],
-      "answer": 0,
-      "explanation": "분자와 분모를 2로 나누면 $\\frac{2}{3}$입니다."
+      "answer": 3,
+      "explanation": "괄호를 먼저 계산하면 $12 \\div 4 = 3$입니다."
     },
     {
       "id": 41,
-      "category_id": 3,
+      "category_id": 21,
       "type": "objective",
-      "question_text": "$3 \\times (8 - 5)$의 값을 구하세요.",
+      "question_text": "$23 \\div 5$의 몫과 나머지를 구하세요.",
       "choices": [
-        "19",
-        "9",
-        "21",
-        "6"
+        "몫 $4$, 나머지 $3$",
+        "몫 $3$, 나머지 $8$",
+        "몫 $5$, 나머지 $3$",
+        "몫 $4$, 나머지 $2$"
       ],
-      "answer": 1,
-      "explanation": "괄호 안을 먼저 계산해요. $8 - 5 = 3$이고, $3 \\times 3 = 9$입니다."
+      "answer": 0,
+      "explanation": "$5 \\times 4 = 20$이고 $23 - 20 = 3$이므로 몫은 $4$, 나머지는 $3$입니다."
     },
     {
       "id": 42,
-      "category_id": 3,
+      "category_id": 21,
       "type": "objective",
-      "question_text": "$18 \\div (2 + 4)$의 값을 구하세요.",
+      "question_text": "$17 \\div 3$의 몫과 나머지를 구하세요.",
       "choices": [
-        "13",
-        "3",
-        "9",
-        "6"
+        "몫 $5$, 나머지 $1$",
+        "몫 $5$, 나머지 $2$",
+        "몫 $4$, 나머지 $5$",
+        "몫 $6$, 나머지 $1$"
       ],
       "answer": 1,
-      "explanation": "괄호 안 $2 + 4 = 6$을 먼저 계산하고, $18 \\div 6 = 3$입니다."
+      "explanation": "$3 \\times 5 = 15$이고 $17 - 15 = 2$이므로 몫은 $5$, 나머지는 $2$입니다."
     },
     {
       "id": 43,
-      "category_id": 3,
+      "category_id": 22,
       "type": "objective",
-      "question_text": "$4 \\times 5 - 6 \\div 2$의 값을 구하세요.",
+      "question_text": "$2 : 6$을 가장 간단한 자연수의 비로 나타내세요.",
       "choices": [
-        "17",
-        "7",
-        "14",
-        "16"
+        "$2 : 3$",
+        "$1 : 6$",
+        "$1 : 3$",
+        "$3 : 1$"
       ],
-      "answer": 0,
-      "explanation": "곱셈과 나눗셈을 먼저 해요. $4 \\times 5 = 20$, $6 \\div 2 = 3$이므로 $20 - 3 = 17$입니다."
+      "answer": 2,
+      "explanation": "전항과 후항을 2로 나누면 $1 : 3$입니다."
     },
     {
       "id": 44,
-      "category_id": 3,
+      "category_id": 22,
       "type": "objective",
-      "question_text": "$\\frac{1}{2} \\times \\frac{3}{4}$의 값을 구하세요.",
+      "question_text": "사과 $12$개와 배 $8$개의 비를 가장 간단한 자연수의 비로 나타내세요.",
       "choices": [
-        "$\\frac{3}{8}$",
-        "$\\frac{4}{6}$",
-        "$\\frac{3}{6}$",
-        "$\\frac{2}{3}$"
+        "$12 : 8$",
+        "$2 : 3$",
+        "$4 : 3$",
+        "$3 : 2$"
       ],
-      "answer": 0,
-      "explanation": "분수의 곱셈은 분자끼리, 분모끼리 곱해요. $\\frac{1 \\times 3}{2 \\times 4} = \\frac{3}{8}$입니다."
+      "answer": 3,
+      "explanation": "$12 : 8$을 4로 나누면 $3 : 2$입니다."
     },
     {
       "id": 45,
-      "category_id": 3,
+      "category_id": 23,
       "type": "objective",
-      "question_text": "$\\frac{5}{6} - \\frac{1}{3}$의 값을 기약분수로 구하세요.",
+      "question_text": "$40$의 $25\\%$는 얼마인가요?",
       "choices": [
-        "$\\frac{4}{6}$",
-        "$\\frac{1}{2}$",
-        "$\\frac{4}{3}$",
-        "$\\frac{3}{6}$"
+        "$10$",
+        "$25$",
+        "$15$",
+        "$8$"
       ],
-      "answer": 1,
-      "explanation": "$\\frac{1}{3} = \\frac{2}{6}$로 통분한 뒤 빼요. $\\frac{5}{6} - \\frac{2}{6} = \\frac{3}{6} = \\frac{1}{2}$입니다."
+      "answer": 0,
+      "explanation": "$40 \\times \\frac{25}{100} = 10$입니다."
     },
     {
       "id": 46,
-      "category_id": 4,
+      "category_id": 23,
       "type": "objective",
-      "question_text": "4 : 6을 가장 간단한 정수의 비로 나타내면?",
+      "question_text": "$50$명 중 $20$명은 전체의 몇 $\\%$인가요?",
       "choices": [
-        "2 : 3",
-        "4 : 6",
-        "1 : 2",
-        "3 : 2"
+        "$20\\%$",
+        "$40\\%$",
+        "$25\\%$",
+        "$50\\%$"
       ],
-      "answer": 0,
-      "explanation": "4와 6의 최대공약수는 2입니다. 두 수를 2로 나누면 2 : 3이 됩니다."
+      "answer": 1,
+      "explanation": "$\\frac{20}{50} = \\frac{40}{100}$이므로 $40\\%$입니다."
     },
     {
       "id": 47,
-      "category_id": 4,
+      "category_id": 24,
       "type": "objective",
-      "question_text": "비 2 : 5의 비율을 분수로 나타내면?",
+      "question_text": "$2 : 3 = 8 : x$일 때 $x$의 값을 구하세요.",
       "choices": [
-        "$\\frac{5}{2}$",
-        "$\\frac{2}{5}$",
-        "$\\frac{2}{7}$",
-        "$\\frac{5}{7}$"
+        "$6$",
+        "$10$",
+        "$12$",
+        "$16$"
       ],
-      "answer": 1,
-      "explanation": "비율은 앞의 수를 뒤의 수로 나눈 값입니다. $2 \\div 5 = \\frac{2}{5}$이에요."
+      "answer": 2,
+      "explanation": "외항의 곱과 내항의 곱이 같으므로 $2x = 24$, $x = 12$입니다."
     },
     {
       "id": 48,
-      "category_id": 4,
+      "category_id": 24,
       "type": "objective",
-      "question_text": "사탕 4개와 초콜릿 6개가 있습니다. 사탕과 초콜릿의 수를 가장 간단한 비로 나타내면?",
+      "question_text": "$3 : 5 = x : 20$일 때 $x$의 값을 구하세요.",
       "choices": [
-        "2 : 3",
-        "4 : 6",
-        "3 : 2",
-        "4 : 10"
+        "$15$",
+        "$10$",
+        "$4$",
+        "$12$"
       ],
-      "answer": 0,
-      "explanation": "사탕 : 초콜릿 = 4 : 6이고, 2로 나누면 2 : 3입니다."
+      "answer": 3,
+      "explanation": "$5x = 60$이므로 $x = 12$입니다."
     },
     {
       "id": 49,
-      "category_id": 4,
+      "category_id": 25,
       "type": "objective",
-      "question_text": "8 : 12와 같은 비는?",
+      "question_text": "가로가 $6\\mathrm{cm}$, 세로가 $4\\mathrm{cm}$인 직사각형의 넓이를 구하세요.",
       "choices": [
-        "2 : 3",
-        "3 : 2",
-        "8 : 6",
-        "12 : 8"
+        "$24\\mathrm{cm}^{2}$",
+        "$20\\mathrm{cm}^{2}$",
+        "$10\\mathrm{cm}^{2}$",
+        "$48\\mathrm{cm}^{2}$"
       ],
       "answer": 0,
-      "explanation": "8과 12를 4로 나누면 2 : 3입니다. 두 수에 같은 수를 곱하거나 나누어도 비는 같아요."
+      "explanation": "직사각형의 넓이는 가로 $\\times$ 세로이므로 $6 \\times 4 = 24$입니다."
     },
     {
       "id": 50,
-      "category_id": 4,
+      "category_id": 25,
       "type": "objective",
-      "question_text": "1 : 4를 백분율로 나타내면?",
+      "question_text": "가로가 $9\\mathrm{cm}$, 세로가 $3\\mathrm{cm}$인 직사각형의 넓이를 구하세요.",
       "choices": [
-        "25%",
-        "40%",
-        "14%",
-        "75%"
+        "$12\\mathrm{cm}^{2}$",
+        "$27\\mathrm{cm}^{2}$",
+        "$24\\mathrm{cm}^{2}$",
+        "$18\\mathrm{cm}^{2}$"
       ],
-      "answer": 0,
-      "explanation": "비율은 $1 \\div 4 = 0.25$이고, 백분율로 쓰면 25%입니다."
+      "answer": 1,
+      "explanation": "$9 \\times 3 = 27$이므로 넓이는 $27\\mathrm{cm}^{2}$입니다."
     },
     {
       "id": 51,
-      "category_id": 5,
+      "category_id": 26,
       "type": "objective",
-      "question_text": "가로 6cm, 세로 2cm, 높이 3cm인 직육면체의 부피는?",
+      "question_text": "밑변이 $6\\mathrm{cm}$, 높이가 $4\\mathrm{cm}$인 삼각형의 넓이를 구하세요.",
       "choices": [
-        "11 $cm^3$",
-        "36 $cm^3$",
-        "18 $cm^3$",
-        "12 $cm^3$"
+        "$24\\mathrm{cm}^{2}$",
+        "$10\\mathrm{cm}^{2}$",
+        "$12\\mathrm{cm}^{2}$",
+        "$8\\mathrm{cm}^{2}$"
       ],
-      "answer": 1,
-      "explanation": "부피 = 가로 × 세로 × 높이. $6 \\times 2 \\times 3 = 36$이므로 36$cm^3$입니다."
+      "answer": 2,
+      "explanation": "삼각형의 넓이는 밑변 $\\times$ 높이 $\\div$ $2$이므로 $6 \\times 4 \\div 2 = 12$입니다."
     },
     {
       "id": 52,
-      "category_id": 5,
+      "category_id": 26,
       "type": "objective",
-      "question_text": "한 변이 4cm인 정육면체의 부피는?",
+      "question_text": "밑변이 $10\\mathrm{cm}$, 높이가 $5\\mathrm{cm}$인 삼각형의 넓이를 구하세요.",
       "choices": [
-        "12 $cm^3$",
-        "16 $cm^3$",
-        "64 $cm^3$",
-        "48 $cm^3$"
+        "$50\\mathrm{cm}^{2}$",
+        "$15\\mathrm{cm}^{2}$",
+        "$30\\mathrm{cm}^{2}$",
+        "$25\\mathrm{cm}^{2}$"
       ],
-      "answer": 2,
-      "explanation": "정육면체의 부피 = 한 변 × 한 변 × 한 변. $4 \\times 4 \\times 4 = 64$이므로 64$cm^3$입니다."
+      "answer": 3,
+      "explanation": "$10 \\times 5 \\div 2 = 25$이므로 넓이는 $25\\mathrm{cm}^{2}$입니다."
     },
     {
       "id": 53,
-      "category_id": 5,
+      "category_id": 27,
       "type": "objective",
-      "question_text": "부피가 48 $cm^3$인 직육면체의 가로가 4cm, 세로가 3cm라면 높이는?",
+      "question_text": "밑변이 $7\\mathrm{cm}$, 높이가 $3\\mathrm{cm}$인 평행사변형의 넓이를 구하세요.",
       "choices": [
-        "4cm",
-        "6cm",
-        "3cm",
-        "12cm"
+        "$21\\mathrm{cm}^{2}$",
+        "$10\\mathrm{cm}^{2}$",
+        "$42\\mathrm{cm}^{2}$",
+        "$14\\mathrm{cm}^{2}$"
       ],
       "answer": 0,
-      "explanation": "높이 = 부피 ÷ (가로 × 세로). $48 \\div (4 \\times 3) = 48 \\div 12 = 4$cm입니다."
+      "explanation": "평행사변형의 넓이는 밑변 $\\times$ 높이이므로 $7 \\times 3 = 21$입니다."
     },
     {
       "id": 54,
-      "category_id": 5,
+      "category_id": 27,
       "type": "objective",
-      "question_text": "가로 8cm, 세로 5cm, 높이 2cm인 직육면체의 부피는?",
+      "question_text": "밑변이 $8\\mathrm{cm}$, 높이가 $5\\mathrm{cm}$인 평행사변형의 넓이를 구하세요.",
       "choices": [
-        "15 $cm^3$",
-        "40 $cm^3$",
-        "80 $cm^3$",
-        "16 $cm^3$"
+        "$13\\mathrm{cm}^{2}$",
+        "$40\\mathrm{cm}^{2}$",
+        "$20\\mathrm{cm}^{2}$",
+        "$80\\mathrm{cm}^{2}$"
       ],
-      "answer": 2,
-      "explanation": "$8 \\times 5 \\times 2 = 80$이므로 80$cm^3$입니다."
+      "answer": 1,
+      "explanation": "$8 \\times 5 = 40$이므로 넓이는 $40\\mathrm{cm}^{2}$입니다."
     },
     {
       "id": 55,
-      "category_id": 5,
+      "category_id": 28,
       "type": "objective",
-      "question_text": "한 변이 5cm인 정육면체의 부피는?",
+      "question_text": "반지름이 $10\\mathrm{cm}$이고 원주율을 $3.14$로 할 때, 원의 넓이를 구하세요.",
       "choices": [
-        "15 $cm^3$",
-        "25 $cm^3$",
-        "125 $cm^3$",
-        "75 $cm^3$"
+        "$31.4\\mathrm{cm}^{2}$",
+        "$62.8\\mathrm{cm}^{2}$",
+        "$314\\mathrm{cm}^{2}$",
+        "$3140\\mathrm{cm}^{2}$"
       ],
       "answer": 2,
-      "explanation": "$5 \\times 5 \\times 5 = 125$이므로 125$cm^3$입니다."
+      "explanation": "원의 넓이는 반지름 $\\times$ 반지름 $\\times$ 원주율이므로 $10 \\times 10 \\times 3.14 = 314$입니다."
     },
     {
       "id": 56,
-      "category_id": 6,
+      "category_id": 28,
       "type": "objective",
-      "question_text": "$8.4 \\div 4$의 값을 구하세요.",
+      "question_text": "반지름이 $2\\mathrm{cm}$이고 원주율을 $3.14$로 할 때, 원의 넓이를 구하세요.",
       "choices": [
-        "2.1",
-        "21",
-        "0.21",
-        "2.4"
+        "$6.28\\mathrm{cm}^{2}$",
+        "$3.14\\mathrm{cm}^{2}$",
+        "$25.12\\mathrm{cm}^{2}$",
+        "$12.56\\mathrm{cm}^{2}$"
       ],
-      "answer": 0,
-      "explanation": "$84 \\div 4 = 21$이고, 소수점을 한 자리 내려 2.1입니다."
+      "answer": 3,
+      "explanation": "$2 \\times 2 \\times 3.14 = 12.56$입니다."
     },
     {
       "id": 57,
-      "category_id": 6,
+      "category_id": 29,
       "type": "objective",
-      "question_text": "$9.6 \\div 0.8$의 값을 구하세요.",
+      "question_text": "가로 $4\\mathrm{cm}$, 세로 $3\\mathrm{cm}$, 높이 $2\\mathrm{cm}$인 직육면체의 부피를 구하세요.",
       "choices": [
-        "1.2",
-        "12",
-        "0.12",
-        "120"
+        "$24\\mathrm{cm}^{3}$",
+        "$9\\mathrm{cm}^{3}$",
+        "$14\\mathrm{cm}^{3}$",
+        "$48\\mathrm{cm}^{3}$"
       ],
-      "answer": 1,
-      "explanation": "두 수에 10을 곱하면 $96 \\div 8 = 12$입니다. ($0.8 \\times 12 = 9.6$으로 검산할 수 있어요.)"
+      "answer": 0,
+      "explanation": "부피는 가로 $\\times$ 세로 $\\times$ 높이이므로 $4 \\times 3 \\times 2 = 24$입니다."
     },
     {
       "id": 58,
-      "category_id": 6,
+      "category_id": 29,
       "type": "objective",
-      "question_text": "$7.2 \\div 0.9$의 값을 구하세요.",
+      "question_text": "가로 $5\\mathrm{cm}$, 세로 $5\\mathrm{cm}$, 높이 $2\\mathrm{cm}$인 직육면체의 부피를 구하세요.",
       "choices": [
-        "0.8",
-        "8",
-        "80",
-        "1.25"
+        "$12\\mathrm{cm}^{3}$",
+        "$50\\mathrm{cm}^{3}$",
+        "$25\\mathrm{cm}^{3}$",
+        "$100\\mathrm{cm}^{3}$"
       ],
       "answer": 1,
-      "explanation": "두 수에 10을 곱하면 $72 \\div 9 = 8$입니다."
+      "explanation": "$5 \\times 5 \\times 2 = 50$이므로 부피는 $50\\mathrm{cm}^{3}$입니다."
     },
     {
       "id": 59,
-      "category_id": 6,
+      "category_id": 30,
       "type": "objective",
-      "question_text": "$2.5 \\div 5$의 값을 구하세요.",
+      "question_text": "$4$, $6$, $8$의 평균을 구하세요.",
       "choices": [
-        "0.5",
-        "5",
-        "0.05",
-        "2"
+        "$18$",
+        "$5$",
+        "$6$",
+        "$8$"
       ],
-      "answer": 0,
-      "explanation": "$25 \\div 5 = 5$이고, 소수점을 한 자리 내려 0.5입니다."
+      "answer": 2,
+      "explanation": "합은 $18$이고 자료가 3개이므로 $18 \\div 3 = 6$입니다."
     },
     {
       "id": 60,
-      "category_id": 6,
+      "category_id": 30,
       "type": "objective",
-      "question_text": "3.6m인 끈을 0.4m씩 자르면 몇 도막이 되나요?",
+      "question_text": "$70$점, $80$점, $90$점의 평균을 구하세요.",
       "choices": [
-        "8도막",
-        "9도막",
-        "0.9도막",
-        "14도막"
+        "$75$점",
+        "$85$점",
+        "$240$점",
+        "$80$점"
       ],
-      "answer": 1,
-      "explanation": "$3.6 \\div 0.4$는 두 수에 10을 곱해 $36 \\div 4 = 9$이므로 9도막입니다."
+      "answer": 3,
+      "explanation": "합은 $240$점이므로 $240 \\div 3 = 80$점입니다."
     }
   ]
 }
