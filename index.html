@@ -169,41 +169,41 @@
                 { no: '02', title: '답을 고르고', desc: '객관식 답을 선택하면 맞았는지 바로 판정해 줘요.' },
                 { no: '03', title: '해설로 이해해요', desc: '틀려도 괜찮아요. 수식 해설로 스스로 이해해요.' }
             ];
+            const limeBtn = {
+                background: '#c9f653',
+                color: '#07111f',
+                boxShadow: '0 12px 32px rgba(201, 246, 83, 0.25)'
+            };
             return (
-                <div className="min-h-screen bg-white">
+                <div className="min-h-screen" style={{ background: 'linear-gradient(120deg,#112b35,#0d2632 50%,#102836)', fontFamily: "'DM Sans','Noto Sans KR',sans-serif" }}>
                     {/* NAV */}
                     <nav className="max-w-6xl mx-auto px-6 h-16 flex justify-between items-center">
                         <div className="flex items-center gap-2">
-                            <span className="w-9 h-9 rounded-xl flex items-center justify-center text-white text-xl font-bold"
-                                style={{ background: 'linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%)' }}>∑</span>
-                            <span className="text-xl font-bold text-gray-900">AI 수학 튜터</span>
+                            <span className="w-9 h-9 rounded-xl flex items-center justify-center text-xl font-bold"
+                                style={{ background: '#c9f653', color: '#07111f' }}>∑</span>
+                            <span className="text-xl font-bold text-white">AI 수학 튜터</span>
                         </div>
                         <button onClick={onStart}
-                            className="px-5 py-2 rounded-full text-sm font-semibold text-white transition hover:opacity-90"
-                            style={{ background: 'linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%)' }}>
+                            className="px-5 py-2 rounded-full text-sm font-bold transition hover:opacity-90" style={limeBtn}>
                             학습 시작
                         </button>
                     </nav>
                     {/* HERO */}
                     <section className="max-w-6xl mx-auto px-6 pt-16 pb-12 text-center">
-                        <p className="text-sm font-semibold mb-4" style={{ color: '#6366f1' }}>나만을 위한 AI 수학 코치</p>
-                        <h1 className="text-4xl md:text-5xl font-extrabold text-gray-900 leading-tight mb-5">
-                            막히는 순간,<br />이해가 시작돼요.
+                        <p className="text-sm font-bold mb-4" style={{ color: '#c9f653' }}>나만을 위한 AI 수학 코치</p>
+                        <h1 className="text-4xl md:text-5xl font-extrabold text-white leading-tight mb-5">
+                            막히는 순간, <span style={{ color: '#65c7f2' }}>이해가 시작돼요.</span>
                         </h1>
-                        <p className="text-lg text-gray-600 mb-8">
+                        <p className="text-lg mb-8" style={{ color: '#a9b9c6' }}>
                             답만 알려주는 대신, 스스로 풀 수 있도록 생각의 길을 열어주는<br className="hidden md:block" />
-                            <strong className="text-gray-900">가장 똑똑한 수학 학습 습관.</strong>
+                            <strong className="text-white">가장 똑똑한 수학 학습 습관.</strong>
                         </p>
                         <button onClick={onStart}
-                            className="px-8 py-4 rounded-full text-white text-lg font-bold transition hover:-translate-y-0.5"
-                            style={{
-                                background: 'linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%)',
-                                boxShadow: '0 15px 40px rgba(99, 102, 241, 0.35)'
-                            }}>
+                            className="px-8 py-4 rounded-full text-lg font-bold transition hover:-translate-y-0.5" style={limeBtn}>
                             무료로 학습 시작하기
                         </button>
-                        <p className="mt-5 text-sm text-gray-500">
-                            <strong className="text-gray-700">초등 3~6학년</strong> 수학 단원 30개 · 문제 60문항 수록
+                        <p className="mt-5 text-sm" style={{ color: '#9fb0c2' }}>
+                            <strong className="text-white">초등 3~6학년</strong> 수학 단원 30개 · 문제 60문항 수록
                         </p>
                     </section>
                     {/* STATS */}
@@ -211,24 +211,24 @@
                         <div className="grid grid-cols-3 gap-4">
                             {stats.map(s => (
                                 <div key={s.label} className="rounded-2xl p-6 text-center"
-                                    style={{ background: '#f5f6ff', border: '1px solid #e4e6fb' }}>
-                                    <p className="text-2xl md:text-3xl font-extrabold mb-1" style={{ color: '#6366f1' }}>{s.value}</p>
-                                    <p className="text-xs md:text-sm text-gray-500">{s.label}</p>
+                                    style={{ background: 'linear-gradient(145deg, #c9f6531a, #0b1829)', border: '1px solid rgba(201,246,83,0.15)' }}>
+                                    <p className="text-2xl md:text-3xl font-extrabold mb-1" style={{ color: '#c9f653' }}>{s.value}</p>
+                                    <p className="text-xs md:text-sm" style={{ color: '#a9b9c6' }}>{s.label}</p>
                                 </div>
                             ))}
                         </div>
                     </section>
                     {/* LEARNING LOOP */}
                     <section className="max-w-5xl mx-auto px-6 pb-20">
-                        <p className="text-center text-xs font-bold tracking-widest mb-2" style={{ color: '#8b5cf6' }}>LEARNING LOOP</p>
-                        <h2 className="text-center text-2xl md:text-3xl font-bold text-gray-900 mb-10">모르는 문제를, 아는 개념으로.</h2>
+                        <p className="text-center text-xs font-bold tracking-widest mb-2" style={{ color: '#65c7f2' }}>LEARNING LOOP</p>
+                        <h2 className="text-center text-2xl md:text-3xl font-bold text-white mb-10">모르는 문제를, 아는 개념으로.</h2>
                         <div className="grid md:grid-cols-3 gap-5">
                             {steps.map(st => (
                                 <div key={st.no} className="rounded-2xl p-7"
-                                    style={{ background: '#fafaff', border: '1px solid #e9e9f5' }}>
-                                    <p className="text-3xl font-extrabold mb-3" style={{ color: '#c7c9f5' }}>{st.no}</p>
-                                    <h3 className="text-lg font-bold text-gray-900 mb-2">{st.title}</h3>
-                                    <p className="text-sm text-gray-600 leading-relaxed">{st.desc}</p>
+                                    style={{ background: 'linear-gradient(145deg,#65c7f21a,#0c1d2d 60%)', border: '1px solid rgba(101,199,242,0.15)' }}>
+                                    <p className="text-3xl font-extrabold mb-3" style={{ color: '#65c7f2' }}>{st.no}</p>
+                                    <h3 className="text-lg font-bold text-white mb-2">{st.title}</h3>
+                                    <p className="text-sm leading-relaxed" style={{ color: '#a9b9c6' }}>{st.desc}</p>
                                 </div>
                             ))}
                         </div>
@@ -236,24 +236,20 @@
                     {/* CTA + FOOTER */}
                     <section className="max-w-5xl mx-auto px-6 pb-10 text-center">
                         <button onClick={onStart}
-                            className="px-8 py-4 rounded-full text-white text-lg font-bold transition hover:-translate-y-0.5"
-                            style={{
-                                background: 'linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%)',
-                                boxShadow: '0 15px 40px rgba(99, 102, 241, 0.35)'
-                            }}>
+                            className="px-8 py-4 rounded-full text-lg font-bold transition hover:-translate-y-0.5" style={limeBtn}>
                             학생으로 시작하기
                         </button>
-                        <p className="mt-4 text-sm text-gray-500">신용카드 없이, 로그인 없이 바로 시작할 수 있어요.</p>
+                        <p className="mt-4 text-sm" style={{ color: '#9fb0c2' }}>신용카드 없이, 로그인 없이 바로 시작할 수 있어요.</p>
                     </section>
-                    <footer className="border-t" style={{ borderColor: '#eceef8' }}>
+                    <footer style={{ borderTop: '1px solid rgba(169,185,198,0.15)' }}>
                         <div className="max-w-6xl mx-auto px-6 py-8 flex flex-col md:flex-row justify-between items-center gap-3">
                             <div className="flex items-center gap-2">
-                                <span className="w-8 h-8 rounded-lg flex items-center justify-center text-white text-lg font-bold"
-                                    style={{ background: 'linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%)' }}>∑</span>
-                                <span className="font-bold text-gray-900">AI 수학 튜터</span>
+                                <span className="w-8 h-8 rounded-lg flex items-center justify-center text-lg font-bold"
+                                    style={{ background: '#c9f653', color: '#07111f' }}>∑</span>
+                                <span className="font-bold text-white">AI 수학 튜터</span>
                             </div>
-                            <p className="text-sm text-gray-500">어려운 수학이, 기다려지는 시간이 되도록.</p>
-                            <p className="text-xs text-gray-400">© 2026 AI 수학 튜터</p>
+                            <p className="text-sm" style={{ color: '#a9b9c6' }}>어려운 수학이, 기다려지는 시간이 되도록.</p>
+                            <p className="text-xs" style={{ color: '#9db0bf' }}>© 2026 AI 수학 튜터</p>
                         </div>
                     </footer>
                 </div>
