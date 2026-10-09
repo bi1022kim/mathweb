@@ -12,10 +12,9 @@
     <script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
     <style>
         body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
-        .card-shadow { box-shadow: 0 10px 25px rgba(0,0,0,0.1); }
+        .katex { font-size: 1.05em; }
         .animate-fade-in { animation: fadeIn 0.5s ease-in; }
         @keyframes fadeIn { from { opacity:0; transform:translateY(10px);} to {opacity:1; transform:translateY(0);} }
-        .katex { font-size: 1.05em; }
     </style>
 </head>
 <body>
@@ -140,7 +139,7 @@
             };
 
             return (
-                <div className="min-h-screen bg-gray-50">
+                <div className="min-h-screen" style={{ background: 'linear-gradient(120deg,#112b35,#0d2632 50%,#102836)' }}>
                     {view === 'landing' && (
                         <Landing onStart={() => setView('dashboard')} />
                     )}
